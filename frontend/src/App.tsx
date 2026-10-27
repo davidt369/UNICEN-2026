@@ -62,56 +62,56 @@ export const App: React.FC = () => {
           ? 'Mi Portal Académico'
           : user.role === 'DOCENTE'
             ? 'Mi Portal Docente'
-            : 'Centro de Mando SIIA',
+            : 'Resumen Ejecutivo SIIA',
+      shortLabel: 'Inicio',
       icon: LayoutDashboard,
       roles: ['ESTUDIANTE', 'DOCENTE', 'ADMINISTRADOR'],
     },
     {
       id: 'enrollments',
       label: 'Inscripción y Oferta de Cursos',
+      shortLabel: 'Inscripción',
       icon: GraduationCap,
       roles: ['ESTUDIANTE'],
     },
     {
       id: 'kardex',
       label: 'Kardex e Historial Académico',
+      shortLabel: 'Kardex',
       icon: FileSpreadsheet,
       roles: ['ESTUDIANTE'],
     },
     {
       id: 'grading',
       label: 'Planilla Docente y Evaluaciones',
+      shortLabel: 'Planilla',
       icon: BookOpen,
       roles: ['DOCENTE', 'ADMINISTRADOR'],
     },
     {
       id: 'admin',
       label: 'Dirección Académica y Catálogo',
+      shortLabel: 'Catálogo',
       icon: Settings,
       roles: ['ADMINISTRADOR'],
     },
   ].filter((item) => item.roles.includes(user.role));
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col lg:flex-row bg-background">
-      {/* =================================================================== */}
-      {/* DRAWER MÓVIL (Off-canvas responsivo con animación de superposición) */}
-      {/* =================================================================== */}
+    <div className="h-[100dvh] w-full max-w-[100vw] overflow-hidden flex flex-col lg:flex-row bg-background">
+      {/* Drawer Lateral Móvil */}
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 z-50 lg:hidden flex"
           role="dialog"
           aria-modal="true"
         >
-          {/* Telón de fondo translúcido (Backdrop) */}
           <div
             className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Panel Lateral Móvil Deslizable */}
           <aside className="relative flex-1 flex flex-col max-w-[280px] w-full bg-[#002B49] text-white shadow-2xl z-50 h-full border-r border-slate-800">
-            {/* Cabecera del Drawer */}
             <div className="p-4 border-b border-white/10 flex items-center justify-between">
               <div className="bg-white rounded-md px-3 py-1.5 flex items-center gap-2">
                 <img
@@ -132,7 +132,6 @@ export const App: React.FC = () => {
               </button>
             </div>
 
-            {/* Ficha Compacta del Usuario en Móvil */}
             <div className="p-3 mx-3 mt-3 rounded-md bg-[#003865] border border-white/10 flex items-center gap-3 shrink-0">
               <Avatar className="h-9 w-9 border border-white/20 shrink-0">
                 <AvatarFallback className="bg-[#E05A1B] text-white font-bold text-xs">
@@ -154,7 +153,6 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Navegación de Enlaces Móviles */}
             <nav
               aria-label="Navegación móvil SIIA UNICEN"
               className="p-3 space-y-1 flex-1 overflow-y-auto"
@@ -182,7 +180,6 @@ export const App: React.FC = () => {
               })}
             </nav>
 
-            {/* Pie del Drawer Móvil con Logout */}
             <div className="p-3 border-t border-white/10 bg-[#00233B] space-y-2 shrink-0">
               <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] text-sky-200 flex items-center gap-2">
                 <ShieldCheck
@@ -205,12 +202,9 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* SIDEBAR ESCRITORIO PERMANENTE (Visible solo en pantallas lg y superiores) */}
-      {/* =================================================================== */}
+      {/* Sidebar Escritorio Permanente (lg+) */}
       <aside className="hidden lg:flex lg:w-64 xl:w-72 lg:h-full bg-[#002B49] text-white flex-col justify-between shrink-0 border-r border-slate-800 z-40">
         <div className="flex flex-col min-h-0 flex-1 overflow-y-auto">
-          {/* Identidad Institucional con Logo Oficial UNICEN */}
           <div className="p-4 border-b border-white/10 shrink-0">
             <div className="bg-white rounded-md px-3 py-2 flex items-center justify-between gap-2">
               <img
@@ -224,7 +218,6 @@ export const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Ficha Compacta de Operador Autenticado */}
           <div className="p-3.5 mx-3.5 mt-3.5 rounded-md bg-[#003865] border border-white/10 flex items-center gap-3 shrink-0">
             <Avatar className="h-9 w-9 border border-white/20 shrink-0">
               <AvatarFallback className="bg-[#E05A1B] text-white font-bold text-xs">
@@ -246,7 +239,6 @@ export const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Menú Principal de Navegación */}
           <nav
             aria-label="Navegación principal SIIA UNICEN"
             className="p-3.5 space-y-1 flex-1"
@@ -272,9 +264,8 @@ export const App: React.FC = () => {
           </nav>
         </div>
 
-        {/* Pie Fijo del Sidebar (Siempre visible) */}
         <div className="p-3.5 border-t border-white/10 bg-[#00233B] space-y-2.5 shrink-0">
-          <div className="px-2.5 py-1.5 rounded bg-white/5 border border-white/10 text-[11px] text-sky-200 flex items-center gap-2 font-mono">
+          <div className="px-2.5 py-1.5 rounded bg-white/5 border border-white/10 text-[11px] text-sky-200 flex items-center gap-2">
             <ShieldCheck
               className="w-3.5 h-3.5 text-emerald-400 shrink-0"
               aria-hidden="true"
@@ -293,42 +284,30 @@ export const App: React.FC = () => {
         </div>
       </aside>
 
-      {/* =================================================================== */}
-      {/* ÁREA PRINCIPAL CON TOPBAR FIJA Y SCROLL INDEPENDIENTE */}
-      {/* =================================================================== */}
-      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-        {/* Barra Superior Responsiva */}
-        <header className="shrink-0 h-14 bg-white border-b border-border px-3 sm:px-6 flex items-center justify-between gap-3 z-30">
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            {/* Botón Hamburguesa Móvil (Visible solo < lg) */}
+      {/* Área Principal con Topbar Fija, Scroll Independiente y Barra Inferior Móvil */}
+      <div className="flex-1 flex flex-col h-full min-w-0 max-w-full overflow-hidden">
+        <header className="shrink-0 h-14 bg-white border-b border-border px-3 sm:px-6 flex items-center justify-between gap-2 z-30">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 -ml-1 text-slate-700 hover:text-[#002B49] rounded-md hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#002B49]"
+              className="lg:hidden p-2 -ml-1 text-slate-700 hover:text-[#002B49] rounded-md hover:bg-slate-100 shrink-0 focus:outline-none focus:ring-2 focus:ring-[#002B49]"
               aria-label="Abrir menú de navegación"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-xs sm:text-sm font-bold text-[#002B49] truncate">
                 {navItems.find((n) => n.id === activeTab)?.label}
               </h1>
-              {user.careerName && (
-                <p className="text-[10px] text-slate-500 truncate sm:hidden">
-                  {user.careerName}
-                </p>
-              )}
+              <p className="text-[10px] text-slate-500 truncate sm:hidden">
+                {user.careerName || 'Sede Central Cochabamba'}
+              </p>
             </div>
-
-            {user.campusName && (
-              <span className="hidden md:inline-block text-xs text-slate-500 border-l border-slate-200 pl-3 truncate">
-                {user.campusName}
-              </span>
-            )}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 text-xs shrink-0">
-            <span className="hidden sm:inline text-slate-600 font-mono text-[11px]">
+            <span className="hidden md:inline text-slate-600 font-mono text-[11px] truncate max-w-[200px]">
               {user.email}
             </span>
             {user.careerName && (
@@ -340,7 +319,8 @@ export const App: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="h-8 text-xs border-slate-300 text-slate-700 hover:bg-slate-100 px-2 sm:px-3"
+              className="h-8 text-xs border-slate-300 text-slate-700 hover:bg-slate-100 px-2.5 sm:px-3 shrink-0"
+              aria-label="Cerrar sesión"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Salir</span>
@@ -348,9 +328,9 @@ export const App: React.FC = () => {
           </div>
         </header>
 
-        {/* Contenedor de Trabajo con Scroll Independiente y Padding Móvil */}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6 bg-background">
-          <div className="max-w-7xl w-full mx-auto pb-12">
+        {/* Contenedor de Trabajo Mobile-First sin desbordamiento horizontal */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-5 lg:p-6 bg-background">
+          <div className="max-w-7xl w-full min-w-0 mx-auto pb-20 lg:pb-10">
             {activeTab === 'dashboard' && (
               <EnterpriseDashboardView user={user} onNavigate={setActiveTab} />
             )}
@@ -360,6 +340,35 @@ export const App: React.FC = () => {
             {activeTab === 'admin' && <AdminPortalView />}
           </div>
         </main>
+
+        {/* Barra de Navegación Inferior Mobile-First (Solo visible en celulares/tablets < lg) */}
+        <nav
+          aria-label="Navegación inferior móvil"
+          className="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 z-40 flex items-center justify-around px-1 shadow-[0_-2px_10px_rgba(0,0,0,0.04)]"
+        >
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-md text-[10px] font-semibold transition-colors min-w-0 ${
+                  isActive
+                    ? 'text-[#E05A1B]'
+                    : 'text-slate-500 hover:text-[#002B49]'
+                }`}
+              >
+                <Icon
+                  className={`w-4 h-4 shrink-0 ${
+                    isActive ? 'text-[#E05A1B]' : 'text-slate-500'
+                  }`}
+                />
+                <span className="truncate max-w-full">{item.shortLabel}</span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );

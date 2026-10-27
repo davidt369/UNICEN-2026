@@ -81,33 +81,33 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-white">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden grid grid-cols-1 lg:grid-cols-12 bg-white">
       {/* Panel Institucional Izquierdo — Sede Central Cochabamba */}
-      <div className="lg:col-span-7 bg-[#002B49] text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 border-b lg:border-b-0 lg:border-r border-slate-800">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-white/10">
-          <div className="bg-white rounded-md px-4 py-2.5 shadow-sm inline-flex items-center">
+      <div className="lg:col-span-7 bg-[#002B49] text-white flex flex-col justify-between p-5 sm:p-8 lg:p-12 xl:p-16 border-b lg:border-b-0 lg:border-r border-slate-800 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-5 sm:pb-8 border-b border-white/10">
+          <div className="bg-white rounded-md px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm inline-flex items-center">
             <img
               src={unicenLogo}
               alt="Universidad Central UNICEN"
-              className="h-10 w-auto object-contain"
+              className="h-8 sm:h-10 w-auto object-contain"
             />
           </div>
-          <div className="text-right">
-            <p className="text-xs font-semibold text-white tracking-wide">
+          <div className="text-left sm:text-right">
+            <p className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">
               UNIVERSIDAD CENTRAL • SEDE COCHABAMBA
             </p>
-            <p className="text-[11px] text-sky-200/80 mt-0.5">
-              Torre Empresarial (Calle Santivañez) & Campus Salud (Av. Juan de la Rosa)
+            <p className="text-[10px] sm:text-[11px] text-sky-200/80 mt-0.5">
+              Torre Empresarial (C. Santivañez) & Campus Salud (Av. Juan de la Rosa)
             </p>
           </div>
         </div>
 
-        <div className="my-8 space-y-8 max-w-2xl">
-          <div className="space-y-3">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
+        <div className="my-6 sm:my-8 space-y-6 sm:space-y-8 max-w-2xl min-w-0">
+          <div className="space-y-2.5 sm:space-y-3">
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
               Sistema Integrado de Información Académica (SIIA 2026)
             </h1>
-            <p className="text-sm sm:text-base text-sky-100/85 leading-relaxed max-w-[65ch]">
+            <p className="text-xs sm:text-base text-sky-100/85 leading-relaxed max-w-[65ch]">
               Plataforma académica de la Sede Central Cochabamba para la gestión
               de catálogo curricular, oferta de cursos por gestión, inscripción
               estudiantil, registro de calificaciones y consulta de historial
@@ -116,7 +116,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
 
           <div className="space-y-2.5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-xs font-semibold text-sky-200">
                 Perfiles Institucionales Sede Cochabamba (Ingreso en 1 Clic)
               </h2>
@@ -139,34 +139,34 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                       setPassword('Unicen2026!');
                       performLogin(acc.email, 'Unicen2026!');
                     }}
-                    className={`w-full text-left px-4 py-3.5 transition-colors flex items-center justify-between gap-4 hover:bg-white/10 focus-visible:outline-none focus-visible:bg-white/15 ${
+                    className={`w-full text-left px-3.5 py-3 sm:px-4 sm:py-3.5 transition-colors flex items-center justify-between gap-3 hover:bg-white/10 focus-visible:outline-none focus-visible:bg-white/15 ${
                       isSelected ? 'bg-white/10' : ''
                     }`}
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="h-9 w-9 rounded-md bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-white">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-md bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-white">
                         <Icon className="w-4 h-4" aria-hidden="true" />
                       </div>
                       <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-semibold text-white truncate">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <span className="text-xs sm:text-sm font-semibold text-white truncate">
                             {acc.title}
                           </span>
-                          <span className="text-[11px] font-mono text-sky-200 bg-white/10 px-1.5 py-0.5 rounded tabular-nums">
+                          <span className="text-[10px] sm:text-[11px] font-mono text-sky-200 bg-white/10 px-1.5 py-0.5 rounded tabular-nums">
                             {acc.code}
                           </span>
                         </div>
-                        <p className="text-xs text-sky-100/75 truncate mt-0.5">
+                        <p className="text-[11px] sm:text-xs text-sky-100/75 truncate mt-0.5">
                           {acc.scope}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span className="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded border border-white/20 text-white bg-white/5">
                         {acc.role}
                       </span>
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#E05A1B] bg-white px-2.5 py-1 rounded">
+                      <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-[#E05A1B] bg-white px-2.5 py-1 rounded">
                         Acceder
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -178,9 +178,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-sky-200/80">
+        <div className="pt-4 sm:pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs text-sky-200/80">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>Portal Académico Oficial UNICEN</span>
           </div>
           <span>Sede Central Cochabamba • Gestión 2026</span>
@@ -188,10 +188,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </div>
 
       {/* Panel Derecho — Autenticación */}
-      <div className="lg:col-span-5 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-14 xl:px-16 bg-white">
-        <div className="w-full max-w-md mx-auto space-y-6">
-          <div className="space-y-2 border-b border-slate-200 pb-5">
-            <h2 className="text-xl font-bold text-[#002B49] tracking-tight">
+      <div className="lg:col-span-5 flex flex-col justify-center px-5 py-8 sm:px-12 sm:py-12 lg:px-14 xl:px-16 bg-white min-w-0">
+        <div className="w-full max-w-md mx-auto space-y-5 sm:space-y-6">
+          <div className="space-y-1.5 border-b border-slate-200 pb-4 sm:pb-5">
+            <h2 className="text-lg sm:text-xl font-bold text-[#002B49] tracking-tight">
               Iniciar Sesión — Sede Cochabamba
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -277,18 +277,18 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </div>
           </form>
 
-          <div className="pt-5 border-t border-slate-200 text-xs text-slate-600 space-y-1.5">
-            <div className="flex items-center justify-between">
+          <div className="pt-4 sm:pt-5 border-t border-slate-200 text-xs text-slate-600 space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-medium text-slate-700">
                 Cuenta seleccionada:
               </span>
-              <code className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded text-[#002B49] font-semibold">
+              <code className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded text-[#002B49] font-semibold truncate max-w-full">
                 {email}
               </code>
             </div>
             <p className="text-[11px] text-slate-500">
-              Seleccione cualquier perfil del panel izquierdo para evaluar los
-              roles de Estudiante, Docente o Administrador.
+              Seleccione cualquier perfil superior para evaluar los roles de
+              Estudiante, Docente o Administrador.
             </p>
           </div>
         </div>

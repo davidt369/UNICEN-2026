@@ -309,10 +309,10 @@ export const AdminPortalView: React.FC = () => {
   // SUB-PÁGINA 1: FORMULARIO DEDICADO PARA NUEVA MATERIA
   if (subView === 'CREATE_SUBJECT') {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex items-center justify-between gap-4">
+      <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 w-full min-w-0">
+        <div className="bg-white border border-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-[#002B49]">
+            <h2 className="text-base sm:text-lg font-bold text-[#002B49]">
               Registrar Nueva Asignatura en Catálogo
             </h2>
             <p className="text-xs text-slate-600">
@@ -322,6 +322,7 @@ export const AdminPortalView: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            className="w-full sm:w-auto shrink-0"
             onClick={() => setSubView('LIST')}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -329,14 +330,14 @@ export const AdminPortalView: React.FC = () => {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden">
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Datos Curriculares de la Asignatura</CardTitle>
             <CardDescription>
               Complete la sigla, carrera, nivel semestral y créditos académicos.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <form onSubmit={handleCreateSubject} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
@@ -418,7 +419,7 @@ export const AdminPortalView: React.FC = () => {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -441,10 +442,10 @@ export const AdminPortalView: React.FC = () => {
   // SUB-PÁGINA 2: FORMULARIO DEDICADO PARA APERTURAR PARALELO
   if (subView === 'CREATE_COURSE') {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex items-center justify-between gap-4">
+      <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 w-full min-w-0">
+        <div className="bg-white border border-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-[#002B49]">
+            <h2 className="text-base sm:text-lg font-bold text-[#002B49]">
               Aperturar Nuevo Paralelo en Gestión
             </h2>
             <p className="text-xs text-slate-600">
@@ -455,6 +456,7 @@ export const AdminPortalView: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            className="w-full sm:w-auto shrink-0"
             onClick={() => setSubView('LIST')}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -462,15 +464,15 @@ export const AdminPortalView: React.FC = () => {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden">
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Configuración del Paralelo Ofertado</CardTitle>
             <CardDescription>
               Al publicar el curso se crean automáticamente sus rubros de
               evaluación ponderada (100%).
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <form onSubmit={handleCreateOffering} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Select
@@ -569,7 +571,7 @@ export const AdminPortalView: React.FC = () => {
                 />
               </div>
 
-              <div className="p-4 rounded-md bg-slate-50 border border-border space-y-3">
+              <div className="p-3.5 sm:p-4 rounded-md bg-slate-50 border border-border space-y-3">
                 <p className="text-xs font-bold text-[#002B49]">
                   Bloque Horario en Sede Cochabamba
                 </p>
@@ -630,7 +632,7 @@ export const AdminPortalView: React.FC = () => {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -653,10 +655,10 @@ export const AdminPortalView: React.FC = () => {
   // SUB-PÁGINA 3: FORMULARIO DEDICADO PARA REGISTRAR ESTUDIANTE / DOCENTE
   if (subView === 'CREATE_USER') {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex items-center justify-between gap-4">
+      <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 w-full min-w-0">
+        <div className="bg-white border border-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-[#002B49]">
+            <h2 className="text-base sm:text-lg font-bold text-[#002B49]">
               Registrar Nuevo Estudiante o Personal Académico
             </h2>
             <p className="text-xs text-slate-600">
@@ -666,6 +668,7 @@ export const AdminPortalView: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            className="w-full sm:w-auto shrink-0"
             onClick={() => setSubView('LIST')}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -673,15 +676,15 @@ export const AdminPortalView: React.FC = () => {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden">
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Ficha de Registro Institucional</CardTitle>
             <CardDescription>
               La contraseña inicial por defecto para nuevas cuentas es{' '}
               <code className="font-mono font-bold">Unicen2026!</code>.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Select
@@ -765,7 +768,7 @@ export const AdminPortalView: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -788,14 +791,14 @@ export const AdminPortalView: React.FC = () => {
   // SUB-PÁGINA 4: CONSULTA DE KARDEX DE ESTUDIANTE DESDE DIRECCIÓN ACADÉMICA
   if (subView === 'STUDENT_KARDEX' && inspectedKardex) {
     return (
-      <div className="space-y-6">
-        <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
+      <div className="space-y-4 sm:space-y-6 w-full min-w-0">
+        <div className="bg-white border border-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-2 py-0.5 rounded tabular-nums">
                 {inspectedKardex.registrationNumber}
               </span>
-              <h2 className="text-lg font-bold text-[#002B49]">
+              <h2 className="text-base sm:text-lg font-bold text-[#002B49]">
                 Kardex Académico — {inspectedKardex.studentName}
               </h2>
             </div>
@@ -809,6 +812,7 @@ export const AdminPortalView: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            className="w-full sm:w-auto shrink-0"
             onClick={() => {
               setInspectedKardex(null);
               setSubView('LIST');
@@ -819,8 +823,8 @@ export const AdminPortalView: React.FC = () => {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden">
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Historial Académico del Estudiante</CardTitle>
             <CardDescription>
               Materias inscritas, calificaciones acumuladas y estado de
@@ -828,37 +832,29 @@ export const AdminPortalView: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Gestión</TableHead>
-                  <TableHead>Sigla & Asignatura</TableHead>
-                  <TableHead>Docente</TableHead>
-                  <TableHead className="text-right">Nota Final</TableHead>
-                  <TableHead>Estado</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {inspectedKardex.records.map((rec: any) => (
-                  <TableRow key={rec.enrollmentId}>
-                    <TableCell>
-                      <Badge variant="navy">{rec.periodCode}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-mono text-xs font-bold text-[#002B49] mr-2">
-                        {rec.subjectCode}
-                      </span>
-                      <span className="font-semibold text-xs text-slate-900">
+            {/* VISTA MÓVIL */}
+            <div className="md:hidden divide-y divide-border">
+              {inspectedKardex.records.map((rec: any) => (
+                <div key={rec.enrollmentId} className="p-4 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="navy">{rec.periodCode}</Badge>
+                        <span className="font-mono text-xs font-bold text-[#002B49]">
+                          {rec.subjectCode}
+                        </span>
+                      </div>
+                      <h3 className="font-semibold text-sm text-slate-900 mt-1">
                         {rec.subjectName}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-xs text-slate-600">
-                      {rec.teacherName}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
-                      {rec.finalScore} / 100
-                    </TableCell>
-                    <TableCell>
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {rec.teacherName}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono text-sm font-bold text-[#002B49] tabular-nums">
+                        {rec.finalScore} / 100
+                      </div>
                       <Badge
                         variant={
                           rec.status === 'APROBADA'
@@ -867,14 +863,66 @@ export const AdminPortalView: React.FC = () => {
                               ? 'danger'
                               : 'navy'
                         }
+                        className="mt-1"
                       >
                         {rec.status}
                       </Badge>
-                    </TableCell>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* VISTA ESCRITORIO */}
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Gestión</TableHead>
+                    <TableHead>Sigla & Asignatura</TableHead>
+                    <TableHead>Docente</TableHead>
+                    <TableHead className="text-right">Nota Final</TableHead>
+                    <TableHead>Estado</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {inspectedKardex.records.map((rec: any) => (
+                    <TableRow key={rec.enrollmentId}>
+                      <TableCell>
+                        <Badge variant="navy">{rec.periodCode}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-mono text-xs font-bold text-[#002B49] mr-2">
+                          {rec.subjectCode}
+                        </span>
+                        <span className="font-semibold text-xs text-slate-900">
+                          {rec.subjectName}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {rec.teacherName}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
+                        {rec.finalScore} / 100
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            rec.status === 'APROBADA'
+                              ? 'success'
+                              : rec.status === 'REPROBADA'
+                                ? 'danger'
+                                : 'navy'
+                          }
+                        >
+                          {rec.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -883,10 +931,10 @@ export const AdminPortalView: React.FC = () => {
 
   // VISTA PRINCIPAL: LISTADOS LIMPIOS A ANCHO COMPLETO (Master View)
   return (
-    <div className="space-y-6">
-      <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="text-lg font-bold text-[#002B49] tracking-tight">
+    <div className="space-y-4 sm:space-y-6 w-full min-w-0">
+      <div className="bg-white border border-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1 min-w-0">
+          <h2 className="text-base sm:text-lg font-bold text-[#002B49] tracking-tight">
             Dirección Académica y Catálogo — Sede Central Cochabamba
           </h2>
           <p className="text-xs text-slate-600">
@@ -894,13 +942,15 @@ export const AdminPortalView: React.FC = () => {
             paralelos y padrón estudiantil.
           </p>
         </div>
-        <Badge variant="navy">Sede Cochabamba</Badge>
+        <Badge variant="navy" className="shrink-0">
+          Sede Cochabamba
+        </Badge>
       </div>
 
       {feedback && (
         <div
           role="alert"
-          className={`p-4 rounded-lg border flex items-start gap-3 text-xs ${
+          className={`p-3.5 sm:p-4 rounded-lg border flex items-start gap-2.5 text-xs ${
             feedback.type === 'success'
               ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
               : 'bg-red-50 border-red-200 text-red-900'
@@ -916,119 +966,170 @@ export const AdminPortalView: React.FC = () => {
       )}
 
       <Tabs defaultValue="periods" className="w-full space-y-4">
-        <TabsList className="bg-slate-200/70 p-1 h-auto flex flex-wrap justify-start gap-1">
+        <TabsList className="bg-slate-200/70 p-1 h-auto grid grid-cols-2 sm:inline-flex w-full sm:w-auto gap-1">
           <TabsTrigger
             value="periods"
-            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-2 py-2 px-4 text-xs font-semibold"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-1.5 py-2 px-2.5 sm:px-4 text-xs font-semibold truncate"
           >
-            <Calendar className="w-3.5 h-3.5" />
-            Gestiones Académicas ({periods.length})
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Gestiones ({periods.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="subjects"
-            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-2 py-2 px-4 text-xs font-semibold"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-1.5 py-2 px-2.5 sm:px-4 text-xs font-semibold truncate"
           >
-            <BookOpen className="w-3.5 h-3.5" />
-            Catálogo de Materias ({subjects.length})
+            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Materias ({subjects.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="courses"
-            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-2 py-2 px-4 text-xs font-semibold"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-1.5 py-2 px-2.5 sm:px-4 text-xs font-semibold truncate"
           >
-            <Layers className="w-3.5 h-3.5" />
-            Oferta de Cursos ({offerings.length})
+            <Layers className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Cursos ({offerings.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="users"
-            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-2 py-2 px-4 text-xs font-semibold"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white gap-1.5 py-2 px-2.5 sm:px-4 text-xs font-semibold truncate"
           >
-            <Users className="w-3.5 h-3.5" />
-            Estudiantes y Personal ({users.length})
+            <Users className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Usuarios ({users.length})</span>
           </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: GESTIONES ACADÉMICAS */}
         <TabsContent value="periods">
-          <Card>
-            <CardHeader>
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 sm:p-6">
               <CardTitle>
                 Control de Gestiones Académicas (Apertura y Cierre de Matrícula)
               </CardTitle>
               <CardDescription>
-                Al cerrar las inscripciones de una gestión, el dominio bloquea
-                cualquier alta o baja estudiantil en ese período.
+                Al cerrar las inscripciones de una gestión, el sistema bloquea
+                cualquier alta o retiro estudiantil en ese período.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Código</TableHead>
-                    <TableHead>Nombre de la Gestión</TableHead>
-                    <TableHead>Vigencia</TableHead>
-                    <TableHead>Estado de Matrícula</TableHead>
-                    <TableHead className="text-right">Acción</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {periods.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+              {/* VISTA MÓVIL */}
+              <div className="md:hidden divide-y divide-border">
+                {periods.map((p) => (
+                  <div key={p.id} className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-1.5">
                           <Badge variant="navy">{p.code}</Badge>
                           {p.isCurrent && (
                             <Badge variant="orange">VIGENTE</Badge>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell className="font-semibold text-xs text-slate-900">
-                        {p.name}
-                      </TableCell>
-                      <TableCell className="font-mono text-xs text-slate-600 tabular-nums">
-                        {p.startDate} al {p.endDate}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={p.enrollmentsOpen ? 'success' : 'danger'}
-                        >
-                          {p.enrollmentsOpen
-                            ? 'Inscripciones Abiertas'
-                            : 'Inscripciones Cerradas'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant={p.enrollmentsOpen ? 'outline' : 'orange'}
-                          size="sm"
-                          onClick={() =>
-                            handleTogglePeriod(p.id, p.enrollmentsOpen)
-                          }
-                        >
-                          {p.enrollmentsOpen ? (
-                            <>
-                              <Lock className="w-3.5 h-3.5" />
-                              Cerrar Matrícula
-                            </>
-                          ) : (
-                            <>
-                              <Unlock className="w-3.5 h-3.5" />
-                              Abrir Matrícula
-                            </>
-                          )}
-                        </Button>
-                      </TableCell>
+                        <h3 className="font-semibold text-sm text-slate-900 mt-1">
+                          {p.name}
+                        </h3>
+                        <p className="text-[11px] font-mono text-slate-500 mt-0.5 tabular-nums">
+                          {p.startDate} al {p.endDate}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={p.enrollmentsOpen ? 'success' : 'danger'}
+                        className="shrink-0"
+                      >
+                        {p.enrollmentsOpen ? 'Abiertas' : 'Cerradas'}
+                      </Badge>
+                    </div>
+                    <Button
+                      variant={p.enrollmentsOpen ? 'outline' : 'orange'}
+                      size="sm"
+                      className="w-full"
+                      onClick={() => handleTogglePeriod(p.id, p.enrollmentsOpen)}
+                    >
+                      {p.enrollmentsOpen ? (
+                        <>
+                          <Lock className="w-3.5 h-3.5" />
+                          Cerrar Matrícula
+                        </>
+                      ) : (
+                        <>
+                          <Unlock className="w-3.5 h-3.5" />
+                          Abrir Matrícula
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              {/* VISTA ESCRITORIO */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Código</TableHead>
+                      <TableHead>Nombre de la Gestión</TableHead>
+                      <TableHead>Vigencia</TableHead>
+                      <TableHead>Estado de Matrícula</TableHead>
+                      <TableHead className="text-right">Acción</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {periods.map((p) => (
+                      <TableRow key={p.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="navy">{p.code}</Badge>
+                            {p.isCurrent && (
+                              <Badge variant="orange">VIGENTE</Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-semibold text-xs text-slate-900">
+                          {p.name}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-slate-600 tabular-nums">
+                          {p.startDate} al {p.endDate}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={p.enrollmentsOpen ? 'success' : 'danger'}
+                          >
+                            {p.enrollmentsOpen
+                              ? 'Inscripciones Abiertas'
+                              : 'Inscripciones Cerradas'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant={p.enrollmentsOpen ? 'outline' : 'orange'}
+                            size="sm"
+                            onClick={() =>
+                              handleTogglePeriod(p.id, p.enrollmentsOpen)
+                            }
+                          >
+                            {p.enrollmentsOpen ? (
+                              <>
+                                <Lock className="w-3.5 h-3.5" />
+                                Cerrar Matrícula
+                              </>
+                            ) : (
+                              <>
+                                <Unlock className="w-3.5 h-3.5" />
+                                Abrir Matrícula
+                              </>
+                            )}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* TAB 2: CATÁLOGO DE MATERIAS (Ancho completo + Botón para Página de Creación) */}
+        {/* TAB 2: CATÁLOGO DE MATERIAS */}
         <TabsContent value="subjects">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <CardTitle>
                   Catálogo de Asignaturas — Sede Central Cochabamba
@@ -1040,6 +1141,7 @@ export const AdminPortalView: React.FC = () => {
               <Button
                 variant="orange"
                 size="sm"
+                className="w-full sm:w-auto shrink-0"
                 onClick={() => setSubView('CREATE_SUBJECT')}
               >
                 <Plus className="w-4 h-4" />
@@ -1047,58 +1149,96 @@ export const AdminPortalView: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Sigla</TableHead>
-                    <TableHead>Asignatura</TableHead>
-                    <TableHead>Carrera</TableHead>
-                    <TableHead className="text-right">
-                      Semestre / Créditos
-                    </TableHead>
-                    <TableHead className="text-right">Acción</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subjects.map((sub) => (
-                    <TableRow key={sub.id}>
-                      <TableCell>
+              {/* VISTA MÓVIL */}
+              <div className="md:hidden divide-y divide-border">
+                {subjects.map((sub) => (
+                  <div key={sub.id} className="p-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
                         <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
                           {sub.code}
                         </span>
-                      </TableCell>
-                      <TableCell className="font-semibold text-xs text-slate-900">
-                        {sub.name}
-                      </TableCell>
-                      <TableCell className="text-xs text-slate-600">
-                        {sub.careerName}
-                      </TableCell>
-                      <TableCell className="text-right text-xs text-slate-600 tabular-nums">
+                        <h3 className="font-semibold text-sm text-slate-900 mt-1">
+                          {sub.name}
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {sub.careerName}
+                        </p>
+                      </div>
+                      <Badge variant="default" className="shrink-0 tabular-nums">
                         Sem. {sub.semesterLevel} • {sub.credits} Cr.
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-200 text-red-700 hover:bg-red-50"
-                          onClick={() => handleDeleteSubject(sub.id)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Eliminar
-                        </Button>
-                      </TableCell>
+                      </Badge>
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-200 text-red-700 hover:bg-red-50"
+                        onClick={() => handleDeleteSubject(sub.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* VISTA ESCRITORIO */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Sigla</TableHead>
+                      <TableHead>Asignatura</TableHead>
+                      <TableHead>Carrera</TableHead>
+                      <TableHead className="text-right">
+                        Semestre / Créditos
+                      </TableHead>
+                      <TableHead className="text-right">Acción</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {subjects.map((sub) => (
+                      <TableRow key={sub.id}>
+                        <TableCell>
+                          <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                            {sub.code}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-semibold text-xs text-slate-900">
+                          {sub.name}
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-600">
+                          {sub.careerName}
+                        </TableCell>
+                        <TableCell className="text-right text-xs text-slate-600 tabular-nums">
+                          Sem. {sub.semesterLevel} • {sub.credits} Cr.
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-200 text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteSubject(sub.id)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Eliminar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* TAB 3: OFERTA DE CURSOS (Ancho completo + Botón para Página de Creación) */}
+        {/* TAB 3: OFERTA DE CURSOS */}
         <TabsContent value="courses">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <CardTitle>
                   Paralelos Ofertados — Sede Central Cochabamba
@@ -1110,6 +1250,7 @@ export const AdminPortalView: React.FC = () => {
               <Button
                 variant="orange"
                 size="sm"
+                className="w-full sm:w-auto shrink-0"
                 onClick={() => setSubView('CREATE_COURSE')}
               >
                 <Plus className="w-4 h-4" />
@@ -1117,21 +1258,13 @@ export const AdminPortalView: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Gestión / Sigla</TableHead>
-                    <TableHead>Asignatura & Paralelo</TableHead>
-                    <TableHead>Docente Titular</TableHead>
-                    <TableHead className="text-right">Matrícula</TableHead>
-                    <TableHead className="text-right">Acción</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {offerings.map((off) => (
-                    <TableRow key={off.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-1.5">
+              {/* VISTA MÓVIL */}
+              <div className="md:hidden divide-y divide-border">
+                {offerings.map((off) => (
+                  <div key={off.id} className="p-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <Badge variant="navy" className="tabular-nums">
                             {off.periodCode}
                           </Badge>
@@ -1139,44 +1272,95 @@ export const AdminPortalView: React.FC = () => {
                             {off.subjectCode}
                           </span>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-semibold text-xs text-slate-900">
+                        <h3 className="font-semibold text-sm text-slate-900 mt-1">
                           {off.subjectName}
-                        </div>
-                        <div className="text-[11px] text-slate-500">
-                          {off.groupCode}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-slate-700">
-                        {off.teacherName}
-                      </TableCell>
-                      <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
-                        {off.enrolledCount} / {off.maxQuota}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-200 text-red-700 hover:bg-red-50"
-                          onClick={() => handleDeleteOffering(off.id)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Eliminar
-                        </Button>
-                      </TableCell>
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {off.groupCode} • {off.teacherName}
+                        </p>
+                      </div>
+                      <Badge variant="default" className="shrink-0 tabular-nums">
+                        {off.enrolledCount} / {off.maxQuota} cupos
+                      </Badge>
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-200 text-red-700 hover:bg-red-50"
+                        onClick={() => handleDeleteOffering(off.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* VISTA ESCRITORIO */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Gestión / Sigla</TableHead>
+                      <TableHead>Asignatura & Paralelo</TableHead>
+                      <TableHead>Docente Titular</TableHead>
+                      <TableHead className="text-right">Matrícula</TableHead>
+                      <TableHead className="text-right">Acción</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {offerings.map((off) => (
+                      <TableRow key={off.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            <Badge variant="navy" className="tabular-nums">
+                              {off.periodCode}
+                            </Badge>
+                            <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                              {off.subjectCode}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-semibold text-xs text-slate-900">
+                            {off.subjectName}
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            {off.groupCode}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-700">
+                          {off.teacherName}
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
+                          {off.enrolledCount} / {off.maxQuota}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-200 text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteOffering(off.id)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Eliminar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* TAB 4: ESTUDIANTES Y PERSONAL (Ancho completo + Consulta de Kardex y Creación) */}
+        {/* TAB 4: ESTUDIANTES Y PERSONAL */}
         <TabsContent value="users">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <CardTitle>
                   Padrón Institucional Activo — Sede Central Cochabamba
@@ -1189,6 +1373,7 @@ export const AdminPortalView: React.FC = () => {
               <Button
                 variant="orange"
                 size="sm"
+                className="w-full sm:w-auto shrink-0"
                 onClick={() => setSubView('CREATE_USER')}
               >
                 <Plus className="w-4 h-4" />
@@ -1196,20 +1381,13 @@ export const AdminPortalView: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Rol / Registro</TableHead>
-                    <TableHead>Nombre Completo & Correo</TableHead>
-                    <TableHead>Carrera / C.I.</TableHead>
-                    <TableHead className="text-right">Operaciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+              {/* VISTA MÓVIL */}
+              <div className="md:hidden divide-y divide-border">
+                {users.map((u) => (
+                  <div key={u.id} className="p-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <Badge
                             variant={
                               u.role === 'ESTUDIANTE'
@@ -1225,48 +1403,117 @@ export const AdminPortalView: React.FC = () => {
                             {u.registrationNumber}
                           </span>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-semibold text-xs text-slate-900">
+                        <h3 className="font-semibold text-sm text-slate-900 mt-1">
                           {u.fullName}
-                        </div>
-                        <div className="text-[11px] font-mono text-slate-500">
+                        </h3>
+                        <p className="text-[11px] font-mono text-slate-500 truncate">
                           {u.email}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-slate-600">
-                        <div>{u.careerName || 'Dirección Académica CBBA'}</div>
-                        <div className="text-[11px] text-slate-400 tabular-nums">
-                          C.I.: {u.dni}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="inline-flex items-center gap-2">
-                          {u.role === 'ESTUDIANTE' && (
+                        </p>
+                        <p className="text-xs text-slate-600 mt-1">
+                          {u.careerName || 'Dirección Académica CBBA'} • C.I.:{' '}
+                          {u.dni}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                      {u.role === 'ESTUDIANTE' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleInspectStudentKardex(u.id)}
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Ver Kardex
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-200 text-red-700 hover:bg-red-50"
+                        onClick={() => handleDeleteUser(u.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* VISTA ESCRITORIO */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Rol / Registro</TableHead>
+                      <TableHead>Nombre Completo & Correo</TableHead>
+                      <TableHead>Carrera / C.I.</TableHead>
+                      <TableHead className="text-right">Operaciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((u) => (
+                      <TableRow key={u.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                u.role === 'ESTUDIANTE'
+                                  ? 'orange'
+                                  : u.role === 'DOCENTE'
+                                    ? 'navy'
+                                    : 'success'
+                              }
+                            >
+                              {u.role}
+                            </Badge>
+                            <span className="font-mono text-xs text-slate-600 tabular-nums">
+                              {u.registrationNumber}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-semibold text-xs text-slate-900">
+                            {u.fullName}
+                          </div>
+                          <div className="text-[11px] font-mono text-slate-500">
+                            {u.email}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-600">
+                          <div>{u.careerName || 'Dirección Académica CBBA'}</div>
+                          <div className="text-[11px] text-slate-400 tabular-nums">
+                            C.I.: {u.dni}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="inline-flex items-center gap-2">
+                            {u.role === 'ESTUDIANTE' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleInspectStudentKardex(u.id)}
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                Ver Kardex
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleInspectStudentKardex(u.id)}
+                              className="border-red-200 text-red-700 hover:bg-red-50"
+                              onClick={() => handleDeleteUser(u.id)}
                             >
-                              <Eye className="w-3.5 h-3.5" />
-                              Ver Kardex
+                              <Trash2 className="w-3.5 h-3.5" />
+                              Eliminar
                             </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-red-200 text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteUser(u.id)}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Baja Lógica
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
