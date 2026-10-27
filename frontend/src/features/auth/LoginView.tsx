@@ -110,8 +110,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <p className="text-sm sm:text-base text-sky-100/85 leading-relaxed max-w-[65ch]">
               Plataforma académica de la Sede Central Cochabamba para la gestión
               de catálogo curricular, oferta de cursos por gestión, inscripción
-              estudiantil con control transaccional de cupos, registro de
-              calificaciones ponderadas y consulta de Kardex.
+              estudiantil, registro de calificaciones y consulta de historial
+              académico (Kardex).
             </p>
           </div>
 
@@ -179,11 +179,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         </div>
 
         <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-sky-200/80">
-          <div className="flex items-center gap-2 font-mono">
+          <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>PASETO v4.public (Ed25519)</span>
+            <span>Portal Académico Oficial UNICEN</span>
           </div>
-          <span>UNICEN Sede Central Cochabamba • Gestión 2026</span>
+          <span>Sede Central Cochabamba • Gestión 2026</span>
         </div>
       </div>
 
@@ -271,7 +271,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 disabled={loading}
               >
                 {loading
-                  ? 'Verificando firma PASETO...'
+                  ? 'Iniciando sesión...'
                   : 'Ingresar al Portal SIIA'}
               </Button>
             </div>

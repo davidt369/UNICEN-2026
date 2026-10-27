@@ -891,7 +891,7 @@ export const AdminPortalView: React.FC = () => {
           </h2>
           <p className="text-xs text-slate-600">
             Control de períodos de inscripción, catálogo curricular, apertura de
-            paralelos y padrón estudiantil con baja lógica universal.
+            paralelos y padrón estudiantil.
           </p>
         </div>
         <Badge variant="navy">Sede Cochabamba</Badge>
@@ -1034,8 +1034,7 @@ export const AdminPortalView: React.FC = () => {
                   Catálogo de Asignaturas — Sede Central Cochabamba
                 </CardTitle>
                 <CardDescription>
-                  Asignaturas activas del plan de estudios (baja lógica
-                  habilitada).
+                  Asignaturas activas del plan de estudios de la sede.
                 </CardDescription>
               </div>
               <Button
@@ -1085,7 +1084,7 @@ export const AdminPortalView: React.FC = () => {
                           onClick={() => handleDeleteSubject(sub.id)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          Baja Lógica
+                          Eliminar
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -1105,8 +1104,7 @@ export const AdminPortalView: React.FC = () => {
                   Paralelos Ofertados — Sede Central Cochabamba
                 </CardTitle>
                 <CardDescription>
-                  Cursos publicados por gestión con control de cupos y baja
-                  lógica.
+                  Cursos publicados por gestión y control de cupos.
                 </CardDescription>
               </div>
               <Button
@@ -1164,7 +1162,7 @@ export const AdminPortalView: React.FC = () => {
                           onClick={() => handleDeleteOffering(off.id)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          Baja Lógica
+                          Eliminar
                         </Button>
                       </TableCell>
                     </TableRow>

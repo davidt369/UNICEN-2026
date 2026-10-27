@@ -105,8 +105,8 @@ export const KardexView: React.FC = () => {
                 Desglose de Calificaciones Ponderadas ({selectedRecord.subjectCode})
               </CardTitle>
               <CardDescription>
-                Cálculo oficial auditado bajo WeightedEvaluationStrategy (Sede
-                Central Cochabamba).
+                Calificaciones parciales y nota final ponderada (Sede Central
+                Cochabamba).
               </CardDescription>
             </div>
             <div className="text-right tabular-nums">

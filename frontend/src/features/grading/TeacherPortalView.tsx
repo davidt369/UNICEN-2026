@@ -125,7 +125,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
       });
       setFeedback({
         type: 'success',
-        text: 'Calificación registrada y promedio recalculado mediante WeightedEvaluationStrategy.',
+        text: 'Calificación registrada y nota acumulada actualizada.',
       });
       if (selectedCourseId) await loadGradebook(selectedCourseId);
     } catch (err: any) {

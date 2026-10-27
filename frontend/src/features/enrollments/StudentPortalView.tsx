@@ -92,7 +92,7 @@ export const StudentPortalView: React.FC = () => {
       });
       setFeedback({
         type: 'success',
-        text: 'Inscripción registrada exitosamente bajo transacción ACID en Sede Cochabamba.',
+        text: 'Inscripción registrada exitosamente en la Sede Central Cochabamba.',
       });
       if (selectedPeriodId) await loadData(selectedPeriodId);
     } catch (err: any) {
@@ -265,9 +265,9 @@ export const StudentPortalView: React.FC = () => {
                     {actionLoadingId === selectedCourse.id
                       ? 'Validando...'
                       : isEnrolled
-                        ? 'Probar No Duplicidad'
+                        ? 'Ya Inscrito'
                         : isFull
-                          ? 'Probar Límite de Cupo'
+                          ? 'Cupo Agotado'
                           : 'Confirmar Inscripción'}
                   </Button>
                 </>
@@ -286,7 +286,7 @@ export const StudentPortalView: React.FC = () => {
                 inscritas.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -322,7 +322,7 @@ export const StudentPortalView: React.FC = () => {
                 del curso.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -355,6 +355,11 @@ export const StudentPortalView: React.FC = () => {
   }
 
   // VISTA PRINCIPAL: LISTADO LIMPIO CON PESTAÑAS (Sin sobrecarga visual)
+  const filteredOfferings =
+    selectedCareerId === 'ALL'
+      ? offerings
+      : offerings.filter((o) => o.careerId === selectedCareerId);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-lg border border-border shadow-sm">
@@ -363,8 +368,8 @@ export const StudentPortalView: React.FC = () => {
             Oferta e Inscripción de Cursos — Sede Central Cochabamba
           </h2>
           <p className="text-xs text-slate-600">
-            Seleccione cualquier paralelo para abrir su ficha detallada de
-            horarios, ponderaciones e inscripción transaccional.
+            Seleccione cualquier paralelo para consultar sus horarios,
+            evaluaciones e inscribirse.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -420,7 +425,7 @@ export const StudentPortalView: React.FC = () => {
             value="catalog"
             className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white py-2 px-4 text-xs font-semibold"
           >
-            Catálogo de Oferta Disponible ({offerings.length})
+            Catálogo de Oferta Disponible ({filteredOfferings.length})
           </TabsTrigger>
           <TabsTrigger
             value="enrolled"
@@ -433,7 +438,7 @@ export const StudentPortalView: React.FC = () => {
         {/* PESTAÑA 1: CATÁLOGO LIMPIO EN TABLA CON NAVEGACIÓN A PÁGINA DE DETALLE */}
         <TabsContent value="catalog">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <CardTitle>
                   Catálogo de Paralelos Ofertados ({currentPeriodObj?.code})
@@ -443,11 +448,39 @@ export const StudentPortalView: React.FC = () => {
                   bloques horarios y ponderación antes de inscribirse.
                 </CardDescription>
               </div>
-              <Badge variant="navy" className="tabular-nums">
-                Sede Cochabamba
-              </Badge>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-600">
+                  Carrera:
+                </span>
+                <select
+                  aria-label="Filtrar por carrera"
+                  className="h-8 rounded-md border border-input bg-white px-2.5 text-xs text-[#002B49] font-medium"
+                  value={selectedCareerId}
+                  onChange={(e) =>
+                    setSelectedCareerId(
+                      e.target.value === 'ALL' ? 'ALL' : Number(e.target.value),
+                    )
+                  }
+                >
+                  {currentUser?.careerId && (
+                    <option value={currentUser.careerId}>
+                      Mi Carrera: {currentUser.careerName || 'Asignada'}
+                    </option>
+                  )}
+                  <option value="ALL">
+                    Todas las Carreras ({offerings.length})
+                  </option>
+                  {careers
+                    .filter((c) => c.id !== currentUser?.careerId)
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               {loading ? (
                 <div className="p-8 text-center text-xs text-slate-500">
                   Cargando oferta académica...
@@ -464,7 +497,7 @@ export const StudentPortalView: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {offerings.map((off) => {
+                    {filteredOfferings.map((off) => {
                       const isEnrolled = enrolledMap.has(off.id);
                       const isFull = off.availableQuota <= 0;
                       const firstSchedule = off.schedules?.[0];
@@ -564,15 +597,15 @@ export const StudentPortalView: React.FC = () => {
                   Mis Asignaturas Inscritas ({currentPeriodObj?.code})
                 </CardTitle>
                 <CardDescription>
-                  El retiro aplica baja lógica auditable y libera el cupo en la
-                  Sede Central Cochabamba.
+                  El retiro libera el cupo inmediatamente en la Sede Central
+                  Cochabamba.
                 </CardDescription>
               </div>
               <Badge variant="navy" className="tabular-nums">
                 {myEnrollments.length} Materias Activas
               </Badge>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               {myEnrollments.length === 0 ? (
                 <p className="text-xs text-slate-500 py-8 text-center">
                   No tiene asignaturas inscritas activas en esta gestión.
