@@ -150,7 +150,7 @@ export const courseOfferingsTable = pgTable('course_offerings', {
   campusId: integer('campus_id')
     .references(() => campusesTable.id)
     .notNull(),
-  groupCode: varchar('group_code', { length: 30 }).notNull(), // Ej: 'Paralelo A', 'Turno Mañana'
+  groupCode: varchar('group_code', { length: 80 }).notNull(), // Ej: 'Paralelo A', 'Turno Mañana'
   maxQuota: integer('max_quota').default(30).notNull(),
   enrolledCount: integer('enrolled_count').default(0).notNull(),
   modality: varchar('modality', { length: 40 }).default('PRESENCIAL').notNull(),
