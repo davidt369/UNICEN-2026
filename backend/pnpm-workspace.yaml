@@ -1,0 +1,4 @@
+onlyBuiltDependencies:
+  - esbuild
+  - '@nestjs/core'
+verifyDepsBeforeRun: false

@@ -115,22 +115,22 @@ docker compose up --build
 
 ---
 
-### Opción B: Ejecución en Entorno Local
+### Opción B: Ejecución en Entorno Local (con `pnpm`)
 
 1. **Base de Datos y Backend (`backend/`):**
    ```bash
    cd backend
-   npm install
-   npx drizzle-kit push --force
-   npm run seed
-   npm run test
-   npm run start:dev
+   pnpm install
+   pnpm exec drizzle-kit push --force
+   pnpm run seed
+   pnpm test
+   pnpm run start:dev
    ```
 
 2. **Frontend (`frontend/`):**
    ```bash
    cd frontend
-   npm install
-   npm run dev
+   pnpm install
+   pnpm run dev
    ```
    Abrir en el navegador: `http://localhost:5173`
