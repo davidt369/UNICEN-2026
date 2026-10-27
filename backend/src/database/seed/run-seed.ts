@@ -24,14 +24,13 @@ async function runSeed() {
     'postgresql://postgres:123456@localhost:5432/unicen';
 
   console.log('==========================================================');
-  console.log('🌱 INICIANDO SEEDER INSTITUCIONAL SIIA - UNICEN 2026');
+  console.log('🌱 INICIANDO SEEDER SIIA UNICEN 2026 — SEDE COCHABAMBA');
   console.log('==========================================================');
 
   const queryClient = postgres(connectionString, { max: 1 });
   const db = drizzle(queryClient, { schema });
 
   try {
-    // Limpieza ordenada en cascada solo para reinicializar el entorno de demostración
     await db.delete(studentGradesTable);
     await db.delete(enrollmentsTable);
     await db.delete(courseEvaluationsTable);
@@ -43,86 +42,60 @@ async function runSeed() {
     await db.delete(careersTable);
     await db.delete(campusesTable);
 
-    // 1. Sedes Oficiales UNICEN (unicen.edu.bo)
-    const [cbbaCampus, lpzCampus, sczCampus] = await db
+    // 1. Sede Oficial UNICEN Cochabamba (unicen.edu.bo)
+    const [cbbaCampus] = await db
       .insert(campusesTable)
       .values([
         {
           code: 'CBBA-CENTRAL',
-          name: 'Sede Central Cochabamba (Torre Empresarial & Salud)',
+          name: 'Sede Central Cochabamba (Torre Empresarial & Campus Salud)',
           city: 'Cochabamba',
-          address: 'Calle Santivañez y Junín N° 240 / Av. Juan de la Rosa N° 234',
-        },
-        {
-          code: 'LPZ-UNI2',
-          name: 'Subsede La Paz (Bloque UNI-2)',
-          city: 'La Paz',
-          address: 'Av. Brasil N° 1661, Zona Miraflores',
-        },
-        {
-          code: 'SCZ-PATUJU',
-          name: 'Subsede Santa Cruz (Torre Patujú)',
-          city: 'Santa Cruz de la Sierra',
-          address: 'Av. Trinidad N° 425',
+          address:
+            'Calle Santivañez y Junín N° 240 / Av. Juan de la Rosa N° 234, Cochabamba',
         },
       ])
       .returning();
 
-    console.log('✔ 3 Sedes Oficiales UNICEN registradas.');
+    console.log('✔ Sede Central Cochabamba registrada.');
 
-    // 2. Carreras Oficiales de Licenciatura UNICEN
-    const [iaCareer, medCareer, fykCareer, admCareer, turCareer, derCareer] =
-      await db
-        .insert(careersTable)
-        .values([
-          {
-            code: 'IIA-LIC',
-            name: 'Lic. en Innovación Digital e Inteligencia Artificial',
-            area: 'Tecnología',
-            durationSemesters: 8,
-            campusId: cbbaCampus.id,
-          },
-          {
-            code: 'MED-LIC',
-            name: 'Medicina',
-            area: 'Salud',
-            durationSemesters: 12,
-            campusId: cbbaCampus.id,
-          },
-          {
-            code: 'FYK-LIC',
-            name: 'Fisioterapia y Kinesiología',
-            area: 'Salud',
-            durationSemesters: 10,
-            campusId: cbbaCampus.id,
-          },
-          {
-            code: 'ADM-LIC',
-            name: 'Administración de Empresas',
-            area: 'Empresarial',
-            durationSemesters: 9,
-            campusId: lpzCampus.id,
-          },
-          {
-            code: 'ATHG-LIC',
-            name: 'Administración de Empresas Turísticas, Hoteleras y Gastronómicas',
-            area: 'Empresarial',
-            durationSemesters: 9,
-            campusId: sczCampus.id,
-          },
-          {
-            code: 'DER-LIC',
-            name: 'Derecho y Ciencias Jurídicas',
-            area: 'Social',
-            durationSemesters: 9,
-            campusId: lpzCampus.id,
-          },
-        ])
-        .returning();
+    // 2. Carreras Oficiales de Licenciatura UNICEN — Sede Cochabamba
+    const [iaCareer, medCareer, admCareer, fykCareer] = await db
+      .insert(careersTable)
+      .values([
+        {
+          code: 'IIA-LIC',
+          name: 'Lic. en Innovación Digital e Inteligencia Artificial',
+          area: 'Ciencias de la Tecnología',
+          durationSemesters: 8,
+          campusId: cbbaCampus.id,
+        },
+        {
+          code: 'MED-LIC',
+          name: 'Lic. en Medicina',
+          area: 'Ciencias de la Salud',
+          durationSemesters: 12,
+          campusId: cbbaCampus.id,
+        },
+        {
+          code: 'ADM-LIC',
+          name: 'Lic. en Administración de Empresas',
+          area: 'Ciencias Empresariales',
+          durationSemesters: 9,
+          campusId: cbbaCampus.id,
+        },
+        {
+          code: 'FYK-LIC',
+          name: 'Lic. en Fisioterapia y Kinesiología',
+          area: 'Ciencias de la Salud',
+          durationSemesters: 10,
+          campusId: cbbaCampus.id,
+        },
+      ])
+      .returning();
 
-    console.log('✔ 6 Carreras Oficiales UNICEN registradas.');
+    console.log('✔ 4 Carreras Oficiales en Sede Cochabamba registradas.');
 
-    // 3. Usuarios Institucionales (Contraseña común: Unicen2026!)
+    // 3. Usuarios Institucionales Sede Cochabamba (Contraseña: Unicen2026!)
     const defaultPasswordHash = await bcrypt.hash('Unicen2026!', 10);
 
     const [
@@ -137,7 +110,7 @@ async function runSeed() {
       .insert(usersTable)
       .values([
         {
-          registrationNumber: 'ADM-UNICEN-001',
+          registrationNumber: 'ADM-CBBA-001',
           dni: '4510928 CB',
           email: 'admin@unicen.edu.bo',
           passwordHash: defaultPasswordHash,
@@ -170,14 +143,14 @@ async function runSeed() {
         },
         {
           registrationNumber: 'DOC-ADM-311',
-          dni: '6102934 LP',
+          dni: '6102934 CB',
           email: 'docente.empresarial@unicen.edu.bo',
           passwordHash: defaultPasswordHash,
           firstName: 'Fernando',
           lastName: 'Laredo Guzmán',
           role: 'DOCENTE',
           careerId: admCareer.id,
-          campusId: lpzCampus.id,
+          campusId: cbbaCampus.id,
         },
         {
           registrationNumber: 'RU-2026-482910',
@@ -203,7 +176,7 @@ async function runSeed() {
         },
         {
           registrationNumber: 'RU-2026-604112',
-          dni: '9102384 LP',
+          dni: '9102384 CB',
           email: 'estudiante3@unicen.edu.bo',
           passwordHash: defaultPasswordHash,
           firstName: 'Mateo',
@@ -215,16 +188,15 @@ async function runSeed() {
       ])
       .returning();
 
-    console.log('✔ 7 Usuarios Institucionales (Admin, Docentes y Estudiantes) creados.');
+    console.log('✔ 7 Usuarios Institucionales de Sede Cochabamba creados.');
 
-    // 4. Catálogo de Materias
+    // 4. Catálogo de Materias Sede Cochabamba
     const [
       subFundIa,
       subArqSoft,
       subDataEng,
       subDeepLearning,
       subAnatomia,
-      subFisiologia,
       subFinanzas,
       subBiomecanica,
     ] = await db
@@ -268,7 +240,7 @@ async function runSeed() {
           hoursPerWeek: 6,
           careerId: iaCareer.id,
           description:
-            'Arquitecturas Transformer, LLMs y despliegue en producción.',
+            'Arquitecturas Transformer, modelos profundos y despliegue en producción.',
         },
         {
           code: 'MED-101',
@@ -278,17 +250,7 @@ async function runSeed() {
           hoursPerWeek: 8,
           careerId: medCareer.id,
           description:
-            'Estudio morfológico y funcional del cuerpo humano en Torre de Salud.',
-        },
-        {
-          code: 'MED-204',
-          name: 'Fisiología Médica y Biofísica',
-          credits: 6,
-          semesterLevel: 3,
-          hoursPerWeek: 6,
-          careerId: medCareer.id,
-          description:
-            'Sistemas fisiológicos cardiovasculares, nerviosos y endocrinos.',
+            'Estudio morfológico y funcional del cuerpo humano en Campus Salud Cochabamba.',
         },
         {
           code: 'ADM-102',
@@ -308,12 +270,12 @@ async function runSeed() {
           hoursPerWeek: 4,
           careerId: fykCareer.id,
           description:
-            'Análisis cinemático del movimiento humano y rehabilitación.',
+            'Análisis cinemático del movimiento humano y rehabilitación física.',
         },
       ])
       .returning();
 
-    console.log('✔ 8 Materias académicas registradas en el catálogo.');
+    console.log('✔ 7 Asignaturas registradas en el catálogo de Cochabamba.');
 
     // 5. Gestiones Académicas (II-2025 cerrada con historial y I-2026 vigente abierta)
     const [period2025, period2026] = await db
@@ -338,15 +300,7 @@ async function runSeed() {
       ])
       .returning();
 
-    console.log('✔ 2 Gestiones Académicas (II-2025 y I-2026) configuradas.');
-
-    // 6. Oferta de Cursos
-    // Curso 1: Gestión pasada II-2025 (Fundamentos de IA - Aprobado en Kardex)
-    // Curso 2: Gestión actual I-2026 (Arquitectura de Software - Estudiante 1 inscrito, Lun/Mie 08:00-10:00)
-    // Curso 3: Gestión actual I-2026 (Ingeniería de Datos - Cupo disponible, Mar/Jue 10:00-12:00)
-    // Curso 4: Gestión actual I-2026 (Redes Neuronales - HORARIO SOLAPADO Lun 08:30-10:30 para demostrar bloqueo por choque de horario)
-    // Curso 5: Gestión actual I-2026 (Anatomía Humana - CUPO AGOTADO 2/2 para demostrar validación de cupo lleno)
-    // Curso 6: Gestión actual I-2026 (Gestión Estratégica - Disponible)
+    // 6. Oferta de Cursos en Sede Cochabamba
     const [
       offPastIa,
       offCurrentArq,
@@ -354,6 +308,7 @@ async function runSeed() {
       offConflictDl,
       offFullAnat,
       offCurrentAdm,
+      offCurrentFyk,
     ] = await db
       .insert(courseOfferingsTable)
       .values([
@@ -382,7 +337,7 @@ async function runSeed() {
           periodId: period2026.id,
           teacherId: teacherIa.id,
           campusId: cbbaCampus.id,
-          groupCode: 'Paralelo A - Lab',
+          groupCode: 'Paralelo A - Laboratorio',
           maxQuota: 20,
           enrolledCount: 1,
           modality: 'PRESENCIAL',
@@ -392,7 +347,7 @@ async function runSeed() {
           periodId: period2026.id,
           teacherId: teacherIa.id,
           campusId: cbbaCampus.id,
-          groupCode: 'Paralelo B (Choque Horario Demo)',
+          groupCode: 'Paralelo B (Choque Horario)',
           maxQuota: 20,
           enrolledCount: 0,
           modality: 'PRESENCIAL',
@@ -402,7 +357,7 @@ async function runSeed() {
           periodId: period2026.id,
           teacherId: teacherMed.id,
           campusId: cbbaCampus.id,
-          groupCode: 'Grupo Clínico 1 (Cupo Lleno Demo)',
+          groupCode: 'Grupo Clínico 1 (Cupo Lleno)',
           maxQuota: 2,
           enrolledCount: 2,
           modality: 'PRESENCIAL',
@@ -411,85 +366,96 @@ async function runSeed() {
           subjectId: subFinanzas.id,
           periodId: period2026.id,
           teacherId: teacherAdm.id,
-          campusId: lpzCampus.id,
-          groupCode: 'Paralelo Único Ejecutivo',
-          maxQuota: 30,
-          enrolledCount: 0,
-          modality: 'SEMIPRESENCIAL',
+          campusId: cbbaCampus.id,
+          groupCode: 'Paralelo A - Ejecutivo',
+          maxQuota: 25,
+          enrolledCount: 1,
+          modality: 'PRESENCIAL',
+        },
+        {
+          subjectId: subBiomecanica.id,
+          periodId: period2026.id,
+          teacherId: teacherMed.id,
+          campusId: cbbaCampus.id,
+          groupCode: 'Paralelo A - Clínica',
+          maxQuota: 20,
+          enrolledCount: 1,
+          modality: 'PRESENCIAL',
         },
       ])
       .returning();
 
-    // 7. Bloques de Horarios para los cursos
+    // 7. Bloques de Horarios (Todos en Torre Empresarial o Campus Salud de Cochabamba)
     await db.insert(courseSchedulesTable).values([
-      // Curso pasado II-2025
       {
         courseOfferingId: offPastIa.id,
         dayOfWeek: 'LUNES',
         startTime: '08:00',
         endTime: '10:00',
-        classroom: 'Torre Empresarial - Lab IA 101',
+        classroom: 'Torre Empresarial CBBA - Lab IA 101',
       },
-      // Curso actual Arquitectura de Software (Lun y Mie 08:00 - 10:00)
       {
         courseOfferingId: offCurrentArq.id,
         dayOfWeek: 'LUNES',
         startTime: '08:00',
         endTime: '10:00',
-        classroom: 'Torre Empresarial - Lab 302',
+        classroom: 'Torre Empresarial CBBA - Lab 302',
       },
       {
         courseOfferingId: offCurrentArq.id,
         dayOfWeek: 'MIERCOLES',
         startTime: '08:00',
         endTime: '10:00',
-        classroom: 'Torre Empresarial - Lab 302',
+        classroom: 'Torre Empresarial CBBA - Lab 302',
       },
-      // Curso actual Ingeniería de Datos (Mar y Jue 10:00 - 12:00 - Sin choque)
       {
         courseOfferingId: offCurrentData.id,
         dayOfWeek: 'MARTES',
         startTime: '10:00',
         endTime: '12:00',
-        classroom: 'Torre Empresarial - Lab Base de Datos 204',
+        classroom: 'Torre Empresarial CBBA - Lab Datos 204',
       },
       {
         courseOfferingId: offCurrentData.id,
         dayOfWeek: 'JUEVES',
         startTime: '10:00',
         endTime: '12:00',
-        classroom: 'Torre Empresarial - Lab Base de Datos 204',
+        classroom: 'Torre Empresarial CBBA - Lab Datos 204',
       },
-      // Curso Redes Neuronales (LUNES 08:30 - 10:30 -> Choca con Arquitectura de Software 08:00 - 10:00)
       {
         courseOfferingId: offConflictDl.id,
         dayOfWeek: 'LUNES',
         startTime: '08:30',
         endTime: '10:30',
-        classroom: 'Torre Empresarial - Lab GPU 401',
+        classroom: 'Torre Empresarial CBBA - Lab GPU 401',
       },
       {
         courseOfferingId: offConflictDl.id,
         dayOfWeek: 'VIERNES',
         startTime: '08:30',
         endTime: '10:30',
-        classroom: 'Torre Empresarial - Lab GPU 401',
+        classroom: 'Torre Empresarial CBBA - Lab GPU 401',
       },
-      // Curso Anatomía Humana (Mar y Jue 14:00 - 16:30)
       {
         courseOfferingId: offFullAnat.id,
         dayOfWeek: 'MARTES',
         startTime: '14:00',
         endTime: '16:30',
-        classroom: 'Torre de Salud - Anfiteatro 1',
+        classroom: 'Campus Salud CBBA - Anfiteatro 1',
       },
-      // Curso Gestión Estratégica (Vie 18:30 - 21:00)
       {
         courseOfferingId: offCurrentAdm.id,
         dayOfWeek: 'VIERNES',
         startTime: '18:30',
         endTime: '21:00',
-        classroom: 'Bloque UNI-2 - Aula Magna 105',
+        classroom: 'Torre Empresarial CBBA - Aula 205',
+      },
+      {
+        courseOfferingId: offCurrentFyk.id,
+        dayOfWeek: 'MIERCOLES',
+        startTime: '15:00',
+        endTime: '17:30',
+        classroom: 'Campus Salud CBBA - Gabinete Kinesiología 2',
       },
     ]);
 
@@ -518,7 +484,7 @@ async function runSeed() {
       ])
       .returning();
 
-    const [evArq1, evArq2, evArq3, evArq4] = await db
+    const [evArq1, evArq2] = await db
       .insert(courseEvaluationsTable)
       .values([
         {
@@ -548,7 +514,13 @@ async function runSeed() {
       ])
       .returning();
 
-    for (const off of [offCurrentData, offConflictDl, offFullAnat, offCurrentAdm]) {
+    for (const off of [
+      offCurrentData,
+      offConflictDl,
+      offFullAnat,
+      offCurrentAdm,
+      offCurrentFyk,
+    ]) {
       await db.insert(courseEvaluationsTable).values([
         {
           courseOfferingId: off.id,
@@ -571,18 +543,14 @@ async function runSeed() {
       ]);
     }
 
-    // 9. Inscripciones de Ejemplo
+    // 9. Inscripciones de Ejemplo en Sede Cochabamba
     const [
       enrStudent1PastIa,
       enrStudent1CurrentArq,
       enrStudent3CurrentArq,
-      enrStudent3CurrentData,
-      enrStudent2FullAnat,
-      enrStudent3FullAnat,
     ] = await db
       .insert(enrollmentsTable)
       .values([
-        // Alejandro Morales aprobó Fundamentos de IA en II-2025 con 86.25 puntos
         {
           studentId: student1.id,
           courseOfferingId: offPastIa.id,
@@ -590,7 +558,6 @@ async function runSeed() {
           status: 'APROBADA',
           finalScore: '86.25',
         },
-        // Alejandro Morales cursa Arquitectura de Software en I-2026 (con 2 parciales ya calificados)
         {
           studentId: student1.id,
           courseOfferingId: offCurrentArq.id,
@@ -598,7 +565,6 @@ async function runSeed() {
           status: 'ACTIVA',
           finalScore: '43.75',
         },
-        // Mateo Villarroel también cursa Arquitectura de Software en I-2026
         {
           studentId: student3.id,
           courseOfferingId: offCurrentArq.id,
@@ -606,7 +572,6 @@ async function runSeed() {
           status: 'ACTIVA',
           finalScore: '38.00',
         },
-        // Mateo Villarroel cursa Ingeniería de Datos
         {
           studentId: student3.id,
           courseOfferingId: offCurrentData.id,
@@ -614,7 +579,6 @@ async function runSeed() {
           status: 'ACTIVA',
           finalScore: null,
         },
-        // Anatomía Humana tiene 2/2 cupos llenos (Valeria y Mateo)
         {
           studentId: student2.id,
           courseOfferingId: offFullAnat.id,
@@ -629,12 +593,25 @@ async function runSeed() {
           status: 'ACTIVA',
           finalScore: null,
         },
+        {
+          studentId: student2.id,
+          courseOfferingId: offCurrentAdm.id,
+          periodId: period2026.id,
+          status: 'ACTIVA',
+          finalScore: null,
+        },
+        {
+          studentId: student2.id,
+          courseOfferingId: offCurrentFyk.id,
+          periodId: period2026.id,
+          status: 'ACTIVA',
+          finalScore: null,
+        },
       ])
       .returning();
 
     // 10. Calificaciones Registradas
     await db.insert(studentGradesTable).values([
-      // Notas completas de Alejandro en II-2025 (85*0.35 + 85*0.35 + 90*0.30 = 29.75 + 29.75 + 27 = 86.5 -> ajustemos a 85, 85, 89 -> 86.2)
       {
         enrollmentId: enrStudent1PastIa.id,
         evaluationId: evPast1.id,
@@ -656,7 +633,6 @@ async function runSeed() {
         feedback: 'Proyecto final sobresaliente.',
         gradedById: teacherIa.id,
       },
-      // Notas parciales de Alejandro en Arquitectura de Software I-2026 (90*0.25 + 85*0.25 = 22.5 + 21.25 = 43.75 pts sobre 50% evaluado)
       {
         enrollmentId: enrStudent1CurrentArq.id,
         evaluationId: evArq1.id,
@@ -671,7 +647,6 @@ async function runSeed() {
         feedback: 'Buena separación de capas y Screaming Architecture.',
         gradedById: teacherIa.id,
       },
-      // Notas parciales de Mateo en Arquitectura de Software I-2026
       {
         enrollmentId: enrStudent3CurrentArq.id,
         evaluationId: evArq1.id,
@@ -688,12 +663,8 @@ async function runSeed() {
       },
     ]);
 
-    console.log('✔ Oferta de cursos, horarios, evaluaciones ponderadas, inscripciones y notas iniciales creadas.');
     console.log('==========================================================');
-    console.log('✅ SEEDER COMPLETADO CON ÉXITO');
-    console.log('   Admin:      admin@unicen.edu.bo / Unicen2026!');
-    console.log('   Docente IA: docente.ia@unicen.edu.bo / Unicen2026!');
-    console.log('   Estudiante: estudiante1@unicen.edu.bo / Unicen2026!');
+    console.log('✅ SEEDER SEDE COCHABAMBA COMPLETADO CON ÉXITO');
     console.log('==========================================================');
   } finally {
     await queryClient.end();

@@ -1,7 +1,7 @@
 # SIIA UNICEN 2026 — Sistema Integrado de Información Académica
 
-> **Universidad Central (UNICEN) • Bolivia**  
-> *"Comprometida con tu Futuro Laboral"* — Sedes: Cochabamba, La Paz y Santa Cruz.
+> **Universidad Central (UNICEN) • Sede Central Cochabamba, Bolivia**  
+> *"Comprometida con tu Futuro Laboral"* — Campus Torre Empresarial (Calle Santivañez) & Campus Salud (Av. Juan de la Rosa).
 
 Sistema académico empresarial Full-Stack desarrollado con **NestJS + Drizzle ORM (PostgreSQL)** en el Backend, autenticación mediante **PASETO v4.public (Ed25519)** y **React + TypeScript + Tailwind CSS + shadcn/ui** en el Frontend, diseñado bajo **Screaming Architecture**, **Clean Architecture** y principios **SOLID**.
 
@@ -85,18 +85,18 @@ En un sistema universitario real, eliminar físicamente (`DELETE FROM`) un curso
 
 ---
 
-## 4. Credenciales Institucionales de Prueba (Seeder UNICEN)
+## 4. Credenciales Institucionales de Prueba (Seeder UNICEN — Sede Cochabamba)
 
-El seeder carga las sedes oficiales (**Cochabamba, La Paz, Santa Cruz**), carreras reales de `unicen.edu.bo` (*Lic. en Innovación Digital e IA, Medicina, Fisioterapia y Kinesiología, Administración de Empresas, Derecho*), materias, horarios y calificaciones.
+El seeder carga la **Sede Central Cochabamba** (`CBBA-CENTRAL`), las carreras oficiales de licenciatura en Cochabamba (*Lic. en Innovación Digital e IA, Medicina, Administración de Empresas, Fisioterapia y Kinesiología*), materias, horarios y calificaciones.
 
 > **Contraseña universal para todas las cuentas de prueba:** `Unicen2026!`  
 > *(En la pantalla de Login también dispones de botones de acceso rápido en 1 clic).*
 
 | Rol | Correo Institucional | Nombre y Registro SIIA | Escenario de Prueba Preparado |
 | :--- | :--- | :--- | :--- |
-| **ESTUDIANTE** | `estudiante1@unicen.edu.bo` | **Alejandro Morales Camacho**<br>`RU-2026-482910` (Innovación Digital e IA) | • Tiene 1 materia aprobada en `II-2025` (86.25 pts) visible en Kardex.<br>• Está inscrito en *Arquitectura de Software (`IIA-201`)* en `I-2026` (Lun/Mié 08:00-10:00).<br>• Puede inscribirse en *Ingeniería de Datos (`IIA-301`)* (sin choque).<br>• Puede probar **Choque de Horario** intentando inscribirse a *Redes Neuronales (`IIA-402`)* (Lun 08:30-10:30).<br>• Puede probar **Cupo Agotado** intentando inscribirse a *Anatomía Humana (`MED-101`)* (Cupo 2/2). |
-| **DOCENTE** | `docente.ia@unicen.edu.bo` | **Ph.D. Ing. Roberto Méndez**<br>`DOC-IIA-104` | • Titular de los cursos de IA y Arquitectura de Software.<br>• Puede configurar las ponderaciones dinámicas (%) y registrar notas parciales y finales. |
-| **ADMINISTRADOR** | `admin@unicen.edu.bo` | **M.Sc. Ricardo Quiroga Rojas**<br>`ADM-UNICEN-001` | • Abrir/cerrar inscripciones de las gestiones `I-2026` y `II-2025`.<br>• Crear y dar de baja lógica materias, cursos ofertados y usuarios. |
+| **ESTUDIANTE** | `estudiante1@unicen.edu.bo` | **Alejandro Morales Camacho**<br>`RU-2026-482910` (Innovación Digital e IA - CBBA) | • Tiene 1 materia aprobada en `II-2025` (86.25 pts) visible en Kardex.<br>• Está inscrito en *Arquitectura de Software (`IIA-201`)* en `I-2026` (Lun/Mié 08:00-10:00).<br>• Puede inscribirse en *Ingeniería de Datos (`IIA-301`)* (sin choque).<br>• Puede probar **Choque de Horario** intentando inscribirse a *Redes Neuronales (`IIA-402`)* (Lun 08:30-10:30).<br>• Puede probar **Cupo Agotado** intentando inscribirse a *Anatomía Humana (`MED-101`)* (Cupo 2/2). |
+| **DOCENTE** | `docente.ia@unicen.edu.bo` | **Ph.D. Ing. Roberto Méndez**<br>`DOC-IIA-104` (Sede Cochabamba) | • Titular de los cursos de IA y Arquitectura de Software.<br>• Puede configurar las ponderaciones dinámicas (%) y registrar notas parciales y finales por estudiante. |
+| **ADMINISTRADOR** | `admin@unicen.edu.bo` | **M.Sc. Ricardo Quiroga Rojas**<br>`ADM-CBBA-001` (Sede Cochabamba) | • Abrir/cerrar inscripciones de las gestiones `I-2026` y `II-2025`.<br>• Crear y dar de baja lógica materias, cursos ofertados y usuarios, además de consultar Kardex estudiantil. |
 
 ---
 

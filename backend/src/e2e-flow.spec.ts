@@ -73,11 +73,12 @@ describe('SIIA UNICEN 2026 - Pruebas Integrales de los 5 Módulos sobre PostgreS
     );
   });
 
-  it('[Módulo 2: Academic Catalog] Consulta de Sedes, Carreras y CRUD de Materias con Baja Lógica', async () => {
+  it('[Módulo 2: Academic Catalog] Consulta de Sede Cochabamba, Carreras y CRUD de Materias con Baja Lógica', async () => {
     const campuses = await catalogService.getCampuses();
     const careers = await catalogService.getCareers();
-    expect(campuses.length).toBeGreaterThanOrEqual(3);
-    expect(careers.length).toBeGreaterThanOrEqual(6);
+    expect(campuses.length).toBe(1);
+    expect(campuses[0].city).toBe('Cochabamba');
+    expect(careers.length).toBeGreaterThanOrEqual(4);
 
     const uniqueCode = `TST-${Date.now().toString().slice(-4)}`;
     const createdSubject = await catalogService.createSubject({
@@ -218,5 +219,44 @@ describe('SIIA UNICEN 2026 - Pruebas Integrales de los 5 Módulos sobre PostgreS
     );
     expect(kardex.summary.approvedCourses).toBeGreaterThanOrEqual(1);
     expect(kardex.summary.generalAverage).toBeGreaterThan(51);
+  });
+
+  it('[Módulo 6: Seguridad & Aislamiento de Roles] Prevención de acceso cruzado entre docentes y roles', async () => {
+    const teacherLogin = await authService.login({
+      email: 'docente.ia@unicen.edu.bo',
+      password: 'Unicen2026!',
+    });
+    const teacherCtx = {
+      id: teacherLogin.user.id,
+      email: teacherLogin.user.email,
+      role: teacherLogin.user.role,
+      registrationNumber: teacherLogin.user.registrationNumber,
+      fullName: teacherLogin.user.fullName,
+    };
+
+    const offerings = await offeringsService.getOfferings();
+    const otherTeacherCourse = offerings.find(
+      (o) => o.teacherId !== teacherCtx.id,
+    )!;
+    expect(otherTeacherCourse).toBeDefined();
+
+    // 6.1 Un docente no puede consultar la planilla de otro docente
+    await expect(
+      gradingService.getCourseGradebook(otherTeacherCourse.id, teacherCtx),
+    ).rejects.toThrow(/No tiene permisos para consultar la planilla/);
+
+    // 6.2 Un docente no puede modificar el esquema de evaluaciones de otro docente
+    await expect(
+      offeringsService.updateCourseEvaluations(
+        otherTeacherCourse.id,
+        {
+          evaluations: [
+            { name: 'Examen 1', weightPercentage: 50 },
+            { name: 'Examen 2', weightPercentage: 50 },
+          ],
+        },
+        teacherCtx,
+      ),
+    ).rejects.toThrow(/No tiene permisos para modificar el esquema evaluativo/);
   });
 });

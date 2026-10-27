@@ -53,7 +53,12 @@ export const App: React.FC = () => {
   const navItems = [
     {
       id: 'dashboard',
-      label: 'Resumen Operativo SIIA',
+      label:
+        user.role === 'ESTUDIANTE'
+          ? 'Mi Portal Académico'
+          : user.role === 'DOCENTE'
+            ? 'Mi Portal Docente'
+            : 'Centro de Mando SIIA',
       icon: LayoutDashboard,
       roles: ['ESTUDIANTE', 'DOCENTE', 'ADMINISTRADOR'],
     },

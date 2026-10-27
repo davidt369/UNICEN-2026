@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import unicenLogo from '@/logo.png';
 import { apiRequest, AuthUser, setStoredSession } from '@/lib/api';
-import { Badge, Button, Input, Label } from '@/components/ui/primitives';
+import { Button, Label } from '@/components/ui/primitives';
 import { Input as ShadcnInput } from '@/components/ui/input';
 
 interface LoginViewProps {
@@ -20,25 +20,25 @@ interface LoginViewProps {
 const DEMO_ACCOUNTS = [
   {
     role: 'ESTUDIANTE',
-    title: 'Alejandro Morales',
+    title: 'Alejandro Morales Camacho',
     code: 'RU-2026-482910',
-    scope: 'Lic. Innovación Digital e IA • Sede Cochabamba',
+    scope: 'Lic. Innovación Digital e IA • Sede Central Cochabamba',
     email: 'estudiante1@unicen.edu.bo',
     icon: GraduationCap,
   },
   {
     role: 'DOCENTE',
-    title: 'Ph.D. Ing. Roberto Méndez',
+    title: 'Ph.D. Ing. Roberto Méndez Vargas',
     code: 'DOC-IIA-104',
-    scope: 'Cátedra de IA y Arquitectura Limpia • Sede Cochabamba',
+    scope: 'Docente Titular de IA y Arquitectura • Sede Central Cochabamba',
     email: 'docente.ia@unicen.edu.bo',
     icon: BookOpen,
   },
   {
     role: 'ADMINISTRADOR',
-    title: 'M.Sc. Ricardo Quiroga',
-    code: 'ADM-UNICEN-001',
-    scope: 'Dirección Nacional de Registros e Inscripciones SIIA',
+    title: 'M.Sc. Ricardo Quiroga Rojas',
+    code: 'ADM-CBBA-001',
+    scope: 'Dirección Académica SIIA • Sede Central Cochabamba',
     email: 'admin@unicen.edu.bo',
     icon: ShieldCheck,
   },
@@ -68,7 +68,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     } catch (err: any) {
       setError(
         err.message ||
-          'Credenciales inválidas. Verifique su correo @unicen.edu.bo o utilice una cuenta del directorio.',
+          'Credenciales inválidas. Verifique su correo @unicen.edu.bo o seleccione un perfil del directorio.',
       );
     } finally {
       setLoading(false);
@@ -82,9 +82,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-white">
-      {/* Panel Institucional Izquierdo — Identidad y Directorio SIIA UNICEN */}
+      {/* Panel Institucional Izquierdo — Sede Central Cochabamba */}
       <div className="lg:col-span-7 bg-[#002B49] text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 border-b lg:border-b-0 lg:border-r border-slate-800">
-        {/* Cabecera Institucional */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-white/10">
           <div className="bg-white rounded-md px-4 py-2.5 shadow-sm inline-flex items-center">
             <img
@@ -95,36 +94,34 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
           <div className="text-right">
             <p className="text-xs font-semibold text-white tracking-wide">
-              UNIVERSIDAD CENTRAL • BOLIVIA
+              UNIVERSIDAD CENTRAL • SEDE COCHABAMBA
             </p>
             <p className="text-[11px] text-sky-200/80 mt-0.5">
-              Cochabamba • La Paz • Santa Cruz
+              Torre Empresarial (Calle Santivañez) & Campus Salud (Av. Juan de la Rosa)
             </p>
           </div>
         </div>
 
-        {/* Cuerpo Principal e Identidad del Sistema */}
         <div className="my-8 space-y-8 max-w-2xl">
           <div className="space-y-3">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
               Sistema Integrado de Información Académica (SIIA 2026)
             </h1>
             <p className="text-sm sm:text-base text-sky-100/85 leading-relaxed max-w-[65ch]">
-              Plataforma empresarial para la administración del catálogo
-              curricular, apertura de paralelos, inscripción transaccional con
-              control de cupos y colisión horaria, planillas docentes con
-              ponderación dinámica y emisión de Kardex académico.
+              Plataforma académica de la Sede Central Cochabamba para la gestión
+              de catálogo curricular, oferta de cursos por gestión, inscripción
+              estudiantil con control transaccional de cupos, registro de
+              calificaciones ponderadas y consulta de Kardex.
             </p>
           </div>
 
-          {/* Directorio Estructurado de Acceso para Evaluación Técnica */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-semibold text-sky-200">
-                Directorio de Perfiles Habilitados (Ingreso Directo Evaluador)
+                Perfiles Institucionales Sede Cochabamba (Ingreso en 1 Clic)
               </h2>
               <span className="text-[11px] font-mono text-sky-200/80 tabular-nums">
-                Clave: Unicen2026!
+                Contraseña: Unicen2026!
               </span>
             </div>
 
@@ -181,28 +178,25 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
 
-        {/* Pie Institucional Técnico */}
         <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-sky-200/80">
           <div className="flex items-center gap-2 font-mono">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Autenticación PASETO v4.public (Ed25519)</span>
+            <span>PASETO v4.public (Ed25519)</span>
           </div>
-          <span>
-            Arquitectura Limpia • Control ACID • Auditoría y Baja Lógica
-          </span>
+          <span>UNICEN Sede Central Cochabamba • Gestión 2026</span>
         </div>
       </div>
 
-      {/* Panel Derecho — Espacio de Autenticación */}
+      {/* Panel Derecho — Autenticación */}
       <div className="lg:col-span-5 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-14 xl:px-16 bg-white">
         <div className="w-full max-w-md mx-auto space-y-6">
           <div className="space-y-2 border-b border-slate-200 pb-5">
             <h2 className="text-xl font-bold text-[#002B49] tracking-tight">
-              Iniciar Sesión Institucional
+              Iniciar Sesión — Sede Cochabamba
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Ingrese sus credenciales institucionales de la Universidad Central
-              para acceder a los módulos habilitados según su rol académico.
+              Ingrese con su cuenta institucional de la Universidad Central para
+              acceder a los módulos habilitados según su rol.
             </p>
           </div>
 
@@ -277,25 +271,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 disabled={loading}
               >
                 {loading
-                  ? 'Verificando firma criptográfica PASETO...'
-                  : 'Ingresar al Sistema SIIA'}
+                  ? 'Verificando firma PASETO...'
+                  : 'Ingresar al Portal SIIA'}
               </Button>
             </div>
           </form>
 
-          <div className="pt-5 border-t border-slate-200 text-xs text-slate-600 space-y-2">
+          <div className="pt-5 border-t border-slate-200 text-xs text-slate-600 space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="font-medium text-slate-700">
-                Credencial activa en formulario:
+                Cuenta seleccionada:
               </span>
               <code className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded text-[#002B49] font-semibold">
                 {email}
               </code>
             </div>
             <p className="text-[11px] text-slate-500">
-              Puede seleccionar cualquiera de los 3 perfiles del panel izquierdo
-              para alternar inmediatamente entre la vista de Estudiante, Docente
-              y Dirección Académica.
+              Seleccione cualquier perfil del panel izquierdo para evaluar los
+              roles de Estudiante, Docente o Administrador.
             </p>
           </div>
         </div>

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
   Clock,
-  MapPin,
   AlertCircle,
   CheckCircle2,
   Trash2,
   PlusCircle,
   Lock,
+  ArrowLeft,
+  Eye,
 } from 'lucide-react';
-import { apiRequest } from '../../lib/api';
+import { apiRequest, getStoredUser } from '../../lib/api';
 import {
   Badge,
   Button,
@@ -26,13 +27,20 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Progress } from '../../components/ui/progress';
 
 export const StudentPortalView: React.FC = () => {
+  const currentUser = getStoredUser();
   const [periods, setPeriods] = useState<any[]>([]);
   const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+  const [careers, setCareers] = useState<any[]>([]);
+  const [selectedCareerId, setSelectedCareerId] = useState<number | 'ALL'>(
+    () => currentUser?.careerId || 'ALL',
+  );
   const [offerings, setOfferings] = useState<any[]>([]);
   const [myEnrollments, setMyEnrollments] = useState<any[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{
@@ -43,8 +51,12 @@ export const StudentPortalView: React.FC = () => {
   const loadData = async (periodId?: number) => {
     setLoading(true);
     try {
-      const periodsList = await apiRequest<any[]>('/course-offerings/periods');
+      const [periodsList, careersList] = await Promise.all([
+        apiRequest<any[]>('/course-offerings/periods'),
+        apiRequest<any[]>('/catalog/careers').catch(() => []),
+      ]);
       setPeriods(periodsList);
+      setCareers(careersList);
 
       const activePeriod =
         periodId ||
@@ -80,7 +92,7 @@ export const StudentPortalView: React.FC = () => {
       });
       setFeedback({
         type: 'success',
-        text: 'Inscripción registrada exitosamente bajo transacción ACID.',
+        text: 'Inscripción registrada exitosamente bajo transacción ACID en Sede Cochabamba.',
       });
       if (selectedPeriodId) await loadData(selectedPeriodId);
     } catch (err: any) {
@@ -107,25 +119,252 @@ export const StudentPortalView: React.FC = () => {
     }
   };
 
-  const enrolledCourseIds = new Set(
-    myEnrollments.map((e) => e.courseOfferingId),
+  const enrolledMap = new Map<number, any>(
+    myEnrollments.map((e) => [e.courseOfferingId, e]),
   );
   const currentPeriodObj = periods.find((p) => p.id === selectedPeriodId);
+  const selectedCourse = offerings.find((o) => o.id === selectedCourseId);
 
+  // PÁGINA DE DETALLE DEL CURSO SELECCIONADO (Master-Detail)
+  if (selectedCourse) {
+    const activeEnrollment = enrolledMap.get(selectedCourse.id);
+    const isEnrolled = Boolean(activeEnrollment);
+    const isFull = selectedCourse.availableQuota <= 0;
+    const quotaPercent = Math.min(
+      100,
+      Math.round(
+        (selectedCourse.enrolledCount / selectedCourse.maxQuota) * 100,
+      ),
+    );
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-2 py-0.5 rounded">
+                {selectedCourse.subjectCode}
+              </span>
+              <h2 className="text-lg font-bold text-[#002B49]">
+                {selectedCourse.subjectName}
+              </h2>
+              <Badge
+                variant={isEnrolled ? 'success' : isFull ? 'danger' : 'navy'}
+              >
+                {isEnrolled
+                  ? 'INSCRITO'
+                  : isFull
+                    ? 'CUPO AGOTADO'
+                    : `${selectedCourse.availableQuota} PLAZAS LIBRES`}
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-600 tabular-nums">
+              {selectedCourse.careerName} • Semestre{' '}
+              {selectedCourse.semesterLevel} ({selectedCourse.credits} Créditos)
+              • Sede Central Cochabamba
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelectedCourseId(null);
+              setFeedback(null);
+            }}
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Volver al Catálogo de Oferta
+          </Button>
+        </div>
+
+        {feedback && (
+          <div
+            role="alert"
+            className={`p-4 rounded-lg border flex items-start gap-3 text-xs ${
+              feedback.type === 'success'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                : 'bg-red-50 border-red-200 text-red-900'
+            }`}
+          >
+            {feedback.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+            ) : (
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+            )}
+            <div className="font-medium leading-relaxed">{feedback.text}</div>
+          </div>
+        )}
+
+        {/* Cinta de Ficha Técnica del Paralelo */}
+        <div className="bg-white border border-border rounded-lg shadow-sm grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+          <div className="p-5 space-y-1">
+            <span className="text-xs font-medium text-slate-500">
+              Paralelo y Modalidad
+            </span>
+            <p className="text-sm font-bold text-[#002B49]">
+              {selectedCourse.groupCode} ({selectedCourse.modality})
+            </p>
+            <p className="text-xs text-slate-500">
+              {selectedCourse.campusName}
+            </p>
+          </div>
+
+          <div className="p-5 space-y-1">
+            <span className="text-xs font-medium text-slate-500">
+              Docente Titular Asignado
+            </span>
+            <p className="text-sm font-bold text-[#002B49]">
+              {selectedCourse.teacherName}
+            </p>
+            <p className="text-xs font-mono text-slate-500">
+              {selectedCourse.teacherEmail}
+            </p>
+          </div>
+
+          <div className="p-5 space-y-2">
+            <div className="flex items-center justify-between text-xs font-semibold tabular-nums">
+              <span className="text-slate-600">Control de Cupos</span>
+              <span className="text-[#002B49]">
+                {selectedCourse.enrolledCount} / {selectedCourse.maxQuota} (
+                {quotaPercent}%)
+              </span>
+            </div>
+            <Progress
+              value={quotaPercent}
+              className="h-2"
+              indicatorClassName={isFull ? 'bg-red-600' : 'bg-[#002B49]'}
+            />
+            <div className="pt-1 flex justify-end gap-2">
+              {!selectedCourse.enrollmentsOpen ? (
+                <Button variant="outline" size="sm" disabled>
+                  <Lock className="w-3.5 h-3.5" />
+                  Período Cerrado
+                </Button>
+              ) : (
+                <>
+                  {isEnrolled && activeEnrollment && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-200 text-red-700 hover:bg-red-50"
+                      disabled={actionLoadingId === activeEnrollment.id}
+                      onClick={() => handleWithdraw(activeEnrollment.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Retirar Materia
+                    </Button>
+                  )}
+                  <Button
+                    variant={isEnrolled || isFull ? 'outline' : 'orange'}
+                    size="sm"
+                    disabled={actionLoadingId === selectedCourse.id}
+                    onClick={() => handleEnroll(selectedCourse.id)}
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    {actionLoadingId === selectedCourse.id
+                      ? 'Validando...'
+                      : isEnrolled
+                        ? 'Probar No Duplicidad'
+                        : isFull
+                          ? 'Probar Límite de Cupo'
+                          : 'Confirmar Inscripción'}
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Dos Tablas Limpias: Horarios de Clases y Ponderación Evaluativa */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Bloques Horarios Asignados</CardTitle>
+              <CardDescription>
+                El motor valida que ningún bloque se solape con sus materias ya
+                inscritas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Día</TableHead>
+                    <TableHead>Horario</TableHead>
+                    <TableHead>Aula (Sede Cochabamba)</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {selectedCourse.schedules?.map((s: any) => (
+                    <TableRow key={s.id}>
+                      <TableCell className="font-semibold text-xs text-[#002B49]">
+                        {s.dayOfWeek}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs tabular-nums">
+                        {s.startTime} – {s.endTime}
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {s.classroom}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Esquema de Evaluación Ponderada (100%)</CardTitle>
+              <CardDescription>
+                Ponderación oficial configurada para el cálculo de la nota final
+                del curso.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Orden</TableHead>
+                    <TableHead>Rubro de Evaluación</TableHead>
+                    <TableHead className="text-right">Ponderación</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {selectedCourse.evaluations?.map((ev: any, idx: number) => (
+                    <TableRow key={ev.id}>
+                      <TableCell className="font-mono text-xs text-slate-500 tabular-nums">
+                        #{ev.orderIndex || idx + 1}
+                      </TableCell>
+                      <TableCell className="font-semibold text-xs text-slate-800">
+                        {ev.name}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
+                        {ev.weightPercentage}%
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // VISTA PRINCIPAL: LISTADO LIMPIO CON PESTAÑAS (Sin sobrecarga visual)
   return (
     <div className="space-y-6">
-      {/* Barra de Control de Gestión Académica */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-lg border border-border shadow-sm">
         <div className="space-y-1">
           <h2 className="text-lg font-bold text-[#002B49] tracking-tight">
-            Matrícula Estudiantil y Oferta de Cursos
+            Oferta e Inscripción de Cursos — Sede Central Cochabamba
           </h2>
           <p className="text-xs text-slate-600">
-            Validación transaccional de cupos disponibles (bloqueo pesimista{' '}
-            <code className="font-mono text-[11px] bg-slate-100 px-1 py-0.5 rounded">
-              FOR UPDATE
-            </code>
-            ), prevención de duplicidad y verificación de colisión horaria.
+            Seleccione cualquier paralelo para abrir su ficha detallada de
+            horarios, ponderaciones e inscripción transaccional.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -157,7 +396,6 @@ export const StudentPortalView: React.FC = () => {
         </div>
       </div>
 
-      {/* Mensajes de Validación de Dominio */}
       {feedback && (
         <div
           role="alert"
@@ -176,295 +414,256 @@ export const StudentPortalView: React.FC = () => {
         </div>
       )}
 
-      {/* Tabla de Materias Inscritas en la Gestión */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <CardTitle>
-              Mis Asignaturas Inscritas ({currentPeriodObj?.code})
-            </CardTitle>
-            <CardDescription>
-              Cursos con matrícula activa. El retiro aplica baja lógica y libera
-              inmediatamente el cupo para otros estudiantes.
-            </CardDescription>
-          </div>
-          <Badge variant="navy" className="tabular-nums">
-            {myEnrollments.length} Inscritas
-          </Badge>
-        </CardHeader>
+      <Tabs defaultValue="catalog" className="w-full space-y-4">
+        <TabsList className="bg-slate-200/70 p-1 h-auto flex flex-wrap justify-start gap-1">
+          <TabsTrigger
+            value="catalog"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white py-2 px-4 text-xs font-semibold"
+          >
+            Catálogo de Oferta Disponible ({offerings.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="enrolled"
+            className="data-[state=active]:bg-[#002B49] data-[state=active]:text-white py-2 px-4 text-xs font-semibold"
+          >
+            Mis Asignaturas Inscritas ({myEnrollments.length})
+          </TabsTrigger>
+        </TabsList>
 
-        <CardContent className="p-0">
-          {myEnrollments.length === 0 ? (
-            <p className="text-xs text-slate-500 py-8 text-center">
-              No registra asignaturas inscritas activas en esta gestión
-              académica.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Sigla & Asignatura</TableHead>
-                  <TableHead>Paralelo & Docente</TableHead>
-                  <TableHead>Horario Asignado</TableHead>
-                  <TableHead>Nota Acumulada</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Operación</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {myEnrollments.map((enr) => (
-                  <TableRow key={enr.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
-                          {enr.subjectCode}
-                        </span>
-                        <span className="font-semibold text-slate-900">
-                          {enr.subjectName}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
-                        {enr.credits} Créditos Académicos
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-xs font-semibold text-slate-800">
-                        {enr.groupCode}
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        {enr.teacherName}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {enr.schedules?.map((s: any) => (
-                          <span
-                            key={s.id}
-                            className="inline-flex items-center gap-1 text-[11px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-slate-700 tabular-nums"
-                          >
-                            <Clock className="w-3 h-3 text-[#002B49]" />
-                            <strong>{s.dayOfWeek}:</strong> {s.startTime}–
-                            {s.endTime} ({s.classroom})
-                          </span>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs font-bold text-[#002B49] tabular-nums">
-                      {enr.finalScore !== null
-                        ? `${enr.finalScore} / 100`
-                        : 'En evaluación'}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          enr.status === 'APROBADA'
-                            ? 'success'
-                            : enr.status === 'REPROBADA'
-                              ? 'danger'
-                              : 'navy'
-                        }
-                      >
-                        {enr.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {currentPeriodObj?.enrollmentsOpen ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-                          disabled={actionLoadingId === enr.id}
-                          onClick={() => handleWithdraw(enr.id)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Retirar Curso
-                        </Button>
-                      ) : (
-                        <span className="text-xs text-slate-400">Cerrado</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Catálogo de Oferta de Cursos de la Gestión */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#002B49]">
-            Catálogo de Paralelos Ofertados ({offerings.length})
-          </h3>
-          <span className="text-xs text-slate-500">
-            Seleccione un paralelo para ejecutar la validación de inscripción
-          </span>
-        </div>
-
-        {loading ? (
-          <Card className="p-8 text-center text-sm text-slate-500">
-            Cargando oferta académica de SIIA UNICEN...
+        {/* PESTAÑA 1: CATÁLOGO LIMPIO EN TABLA CON NAVEGACIÓN A PÁGINA DE DETALLE */}
+        <TabsContent value="catalog">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <CardTitle>
+                  Catálogo de Paralelos Ofertados ({currentPeriodObj?.code})
+                </CardTitle>
+                <CardDescription>
+                  Haga clic en &ldquo;Ver Ficha&rdquo; para inspeccionar aulas,
+                  bloques horarios y ponderación antes de inscribirse.
+                </CardDescription>
+              </div>
+              <Badge variant="navy" className="tabular-nums">
+                Sede Cochabamba
+              </Badge>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="p-8 text-center text-xs text-slate-500">
+                  Cargando oferta académica...
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Sigla & Asignatura</TableHead>
+                      <TableHead>Paralelo & Docente</TableHead>
+                      <TableHead>Horario Principal</TableHead>
+                      <TableHead className="text-right">Cupos</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {offerings.map((off) => {
+                      const isEnrolled = enrolledMap.has(off.id);
+                      const isFull = off.availableQuota <= 0;
+                      const firstSchedule = off.schedules?.[0];
+                      return (
+                        <TableRow key={off.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                                {off.subjectCode}
+                              </span>
+                              <span className="font-semibold text-xs text-slate-900">
+                                {off.subjectName}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 mt-0.5">
+                              {off.careerName}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-xs font-semibold text-slate-800">
+                              {off.groupCode}
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              {off.teacherName}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-slate-600 tabular-nums">
+                            {firstSchedule ? (
+                              <span className="inline-flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-[#002B49]" />
+                                {firstSchedule.dayOfWeek}{' '}
+                                {firstSchedule.startTime}–
+                                {firstSchedule.endTime}
+                                {off.schedules.length > 1 &&
+                                  ` (+${off.schedules.length - 1})`}
+                              </span>
+                            ) : (
+                              'Por definir'
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            <Badge
+                              variant={
+                                isEnrolled
+                                  ? 'success'
+                                  : isFull
+                                    ? 'danger'
+                                    : 'neutral'
+                              }
+                            >
+                              {isEnrolled
+                                ? 'Inscrito'
+                                : isFull
+                                  ? 'Agotado (0)'
+                                  : `${off.availableQuota} / ${off.maxQuota}`}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="inline-flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setSelectedCourseId(off.id)}
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                Ver Ficha
+                              </Button>
+                              {off.enrollmentsOpen && !isEnrolled && !isFull && (
+                                <Button
+                                  variant="orange"
+                                  size="sm"
+                                  disabled={actionLoadingId === off.id}
+                                  onClick={() => handleEnroll(off.id)}
+                                >
+                                  <PlusCircle className="w-3.5 h-3.5" />
+                                  Inscribir
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {offerings.map((off) => {
-              const isEnrolled = enrolledCourseIds.has(off.id);
-              const isFull = off.availableQuota <= 0;
-              const quotaPercent = Math.min(
-                100,
-                Math.round((off.enrolledCount / off.maxQuota) * 100),
-              );
+        </TabsContent>
 
-              return (
-                <Card
-                  key={off.id}
-                  className="p-5 flex flex-col justify-between hover:border-slate-300 transition-colors"
-                >
-                  <div className="space-y-3.5">
-                    <div className="flex items-start justify-between gap-3 border-b border-border/60 pb-3">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
-                            {off.subjectCode}
-                          </span>
-                          <Badge variant="neutral">{off.careerName}</Badge>
-                          <span className="text-xs text-slate-500 tabular-nums">
-                            Sem. {off.semesterLevel} • {off.credits} Cr.
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#002B49]">
-                          {off.subjectName}
-                        </h4>
-                      </div>
-                      <Badge
-                        variant={
-                          isEnrolled
-                            ? 'success'
-                            : isFull
-                              ? 'danger'
-                              : 'navy'
-                        }
-                        className="shrink-0 tabular-nums"
-                      >
-                        {isEnrolled
-                          ? 'INSCRITO'
-                          : isFull
-                            ? 'CUPO AGOTADO'
-                            : `${off.availableQuota} PLAZAS`}
-                      </Badge>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600">
-                      <div>
-                        <span className="text-slate-500">Paralelo:</span>{' '}
-                        <strong className="text-slate-800">
-                          {off.groupCode}
-                        </strong>{' '}
-                        ({off.modality})
-                      </div>
-                      <div>
-                        <span className="text-slate-500">Docente:</span>{' '}
-                        <strong className="text-slate-800">
-                          {off.teacherName}
-                        </strong>
-                      </div>
-                      <div className="sm:col-span-2 flex items-center gap-1.5 text-slate-500">
-                        <MapPin className="w-3.5 h-3.5 text-[#002B49] shrink-0" />
-                        <span>{off.campusName}</span>
-                      </div>
-                    </div>
-
-                    {/* Horarios del curso */}
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-semibold text-slate-700">
-                        Bloques Horarios:
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {off.schedules?.map((s: any) => (
-                          <span
-                            key={s.id}
-                            className="inline-flex items-center gap-1.5 text-xs bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded font-medium text-slate-800 tabular-nums"
+        {/* PESTAÑA 2: MIS ASIGNATURAS INSCRITAS */}
+        <TabsContent value="enrolled">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <CardTitle>
+                  Mis Asignaturas Inscritas ({currentPeriodObj?.code})
+                </CardTitle>
+                <CardDescription>
+                  El retiro aplica baja lógica auditable y libera el cupo en la
+                  Sede Central Cochabamba.
+                </CardDescription>
+              </div>
+              <Badge variant="navy" className="tabular-nums">
+                {myEnrollments.length} Materias Activas
+              </Badge>
+            </CardHeader>
+            <CardContent className="p-0">
+              {myEnrollments.length === 0 ? (
+                <p className="text-xs text-slate-500 py-8 text-center">
+                  No tiene asignaturas inscritas activas en esta gestión.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Sigla & Asignatura</TableHead>
+                      <TableHead>Paralelo & Docente</TableHead>
+                      <TableHead className="text-right">
+                        Nota Acumulada
+                      </TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className="text-right">Operación</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {myEnrollments.map((enr) => (
+                      <TableRow key={enr.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                              {enr.subjectCode}
+                            </span>
+                            <span className="font-semibold text-xs text-slate-900">
+                              {enr.subjectName}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-xs font-semibold text-slate-800">
+                            {enr.groupCode}
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            {enr.teacherName}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
+                          {enr.finalScore !== null
+                            ? `${enr.finalScore} / 100`
+                            : 'En evaluación'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              enr.status === 'APROBADA'
+                                ? 'success'
+                                : enr.status === 'REPROBADA'
+                                  ? 'danger'
+                                  : 'navy'
+                            }
                           >
-                            <Clock className="w-3 h-3 text-[#002B49]" />
-                            {s.dayOfWeek} {s.startTime}–{s.endTime} (
-                            {s.classroom})
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Evaluaciones dinámicas ponderadas */}
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-semibold text-slate-700">
-                        Esquema de Evaluación Ponderada (100%):
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {off.evaluations?.map((ev: any) => (
-                          <span
-                            key={ev.id}
-                            className="text-[11px] bg-slate-50 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-medium tabular-nums"
-                          >
-                            {ev.name}: <strong>{ev.weightPercentage}%</strong>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Barra de Cupos y Acción */}
-                  <div className="mt-4 pt-3.5 border-t border-border/60 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex-1 min-w-[160px] space-y-1">
-                      <div className="flex justify-between text-xs font-semibold tabular-nums">
-                        <span className="text-slate-600">Ocupación</span>
-                        <span
-                          className={
-                            isFull ? 'text-red-600 font-bold' : 'text-[#002B49]'
-                          }
-                        >
-                          {off.enrolledCount} / {off.maxQuota} ({quotaPercent}%)
-                        </span>
-                      </div>
-                      <Progress
-                        value={quotaPercent}
-                        className="h-1.5"
-                        indicatorClassName={
-                          isFull ? 'bg-red-600' : 'bg-[#002B49]'
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      {!off.enrollmentsOpen ? (
-                        <Button variant="outline" size="sm" disabled>
-                          <Lock className="w-3.5 h-3.5" />
-                          Período Cerrado
-                        </Button>
-                      ) : (
-                        <Button
-                          variant={isEnrolled || isFull ? 'outline' : 'orange'}
-                          size="sm"
-                          disabled={actionLoadingId === off.id}
-                          onClick={() => handleEnroll(off.id)}
-                        >
-                          <PlusCircle className="w-3.5 h-3.5" />
-                          {actionLoadingId === off.id
-                            ? 'Procesando...'
-                            : isEnrolled
-                              ? 'Verificar No Duplicidad'
-                              : isFull
-                                ? 'Verificar Límite de Cupo'
-                                : 'Inscribir Asignatura'}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                            {enr.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="inline-flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                setSelectedCourseId(enr.courseOfferingId)
+                              }
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              Ver Ficha
+                            </Button>
+                            {currentPeriodObj?.enrollmentsOpen && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-red-200 text-red-700 hover:bg-red-50"
+                                disabled={actionLoadingId === enr.id}
+                                onClick={() => handleWithdraw(enr.id)}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Retirar
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
