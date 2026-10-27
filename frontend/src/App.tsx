@@ -7,8 +7,8 @@ import {
   Settings,
   ShieldCheck,
   LayoutDashboard,
-  Building2,
 } from 'lucide-react';
+import unicenLogo from '@/logo.png';
 import {
   AuthUser,
   clearStoredSession,
@@ -88,21 +88,18 @@ export const App: React.FC = () => {
     <div className="h-screen w-screen overflow-hidden flex flex-col lg:flex-row bg-background">
       {/* Sidebar Empresarial Fijo Institucional UNICEN (bg-primary = #002B49) */}
       <aside className="w-full lg:w-72 lg:h-full bg-primary text-primary-foreground flex flex-col justify-between shrink-0 border-r border-white/10 shadow-xl z-40">
-        {/* Cabecera y Navegación del Sidebar */}
+        {/* Cabecera Oficial con Logo UNICEN y Navegación */}
         <div className="flex flex-col min-h-0 flex-1 overflow-y-auto">
-          <div className="p-5 flex items-center justify-between gap-3.5 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-black text-lg text-accent-foreground shadow-md">
-                U
-              </div>
-              <div>
-                <div className="font-extrabold text-base tracking-tight leading-none">
-                  UNICEN <span className="text-accent">SIIA</span>
-                </div>
-                <p className="text-[11px] text-slate-300 mt-1">
-                  Comprometida con tu Futuro Laboral
-                </p>
-              </div>
+          <div className="p-4 shrink-0">
+            <div className="bg-white rounded-xl px-3.5 py-2.5 shadow-md flex items-center justify-between gap-2">
+              <img
+                src={unicenLogo}
+                alt="UNICEN - Comprometida con tu Futuro Laboral"
+                className="h-9 w-auto object-contain"
+              />
+              <span className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-[10px] font-extrabold tracking-wider uppercase shrink-0">
+                SIIA 2026
+              </span>
             </div>
           </div>
 
@@ -136,7 +133,10 @@ export const App: React.FC = () => {
           </div>
 
           {/* Navegación de Módulos */}
-          <nav className="p-4 space-y-1.5 flex-1">
+          <nav
+            aria-label="Navegación principal SIIA UNICEN"
+            className="p-4 space-y-1.5 flex-1"
+          >
             <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
               Módulos SIIA 2026
             </p>
@@ -147,13 +147,13 @@ export const App: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isActive
                       ? 'bg-accent text-accent-foreground shadow-md'
                       : 'text-slate-200 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span className="truncate">{item.label}</span>
                 </button>
               );
@@ -164,7 +164,7 @@ export const App: React.FC = () => {
         {/* Pie Fijo del Sidebar (Siempre visible abajo) */}
         <div className="p-4 border-t border-white/10 bg-primary space-y-2.5 shrink-0">
           <div className="px-3 py-1.5 rounded-lg bg-white/5 text-[11px] text-emerald-300 flex items-center gap-2 font-mono">
-            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <ShieldCheck className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span className="truncate">PASETO v4.public (Ed25519)</span>
           </div>
           <Button
@@ -183,11 +183,14 @@ export const App: React.FC = () => {
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
         {/* Topbar Ejecutiva Fija */}
         <header className="shrink-0 bg-card border-b border-border px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-sm z-30">
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <Building2 className="w-4 h-4 text-primary shrink-0" />
-            <span className="hidden sm:inline">Universidad Central (UNICEN)</span>
-            <span className="hidden sm:inline">/</span>
-            <span className="text-primary font-bold">
+          <div className="flex items-center gap-3 text-xs font-semibold text-muted-foreground">
+            <img
+              src={unicenLogo}
+              alt="Logo UNICEN"
+              className="h-6 w-auto object-contain hidden sm:block"
+            />
+            <span className="hidden sm:inline text-border">|</span>
+            <span className="text-primary font-bold text-sm">
               {navItems.find((n) => n.id === activeTab)?.label}
             </span>
           </div>

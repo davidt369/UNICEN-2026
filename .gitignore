@@ -2,6 +2,13 @@
 node_modules/
 **/node_modules/
 
+# Agent Customizations & Skills
+.agents/
+.agent/
+_agents/
+_agent/
+agents/
+
 # Build outputs
 dist/
 build/

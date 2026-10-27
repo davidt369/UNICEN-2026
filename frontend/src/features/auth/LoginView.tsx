@@ -8,8 +8,9 @@ import {
   ArrowRight,
   Building2,
 } from 'lucide-react';
-import { apiRequest, AuthUser, setStoredSession } from '../../lib/api';
-import { Badge, Button, Card, Input } from '../../components/ui/primitives';
+import unicenLogo from '@/logo.png';
+import { apiRequest, AuthUser, setStoredSession } from '@/lib/api';
+import { Badge, Button, Card, Input } from '@/components/ui/primitives';
 
 interface LoginViewProps {
   onLoginSuccess: (user: AuthUser, token: string) => void;
@@ -22,7 +23,7 @@ const DEMO_ACCOUNTS = [
     subtitle: 'R.U. RU-2026-482910 • Lic. Innovación Digital e IA',
     email: 'estudiante1@unicen.edu.bo',
     icon: GraduationCap,
-    color: 'border-l-4 border-l-[#E05A1B]',
+    color: 'border-l-4 border-l-accent',
   },
   {
     role: 'DOCENTE',
@@ -30,7 +31,7 @@ const DEMO_ACCOUNTS = [
     subtitle: 'DOC-IIA-104 • Titular de IA y Arquitectura Limpia',
     email: 'docente.ia@unicen.edu.bo',
     icon: BookOpen,
-    color: 'border-l-4 border-l-[#002B49]',
+    color: 'border-l-4 border-l-primary',
   },
   {
     role: 'ADMINISTRADOR',
@@ -76,37 +77,50 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Barra Superior Institucional UNICEN */}
-      <div className="bg-[#002B49] text-white text-xs py-2 px-6 flex flex-wrap items-center justify-between border-b border-white/10">
+      <div className="bg-primary text-primary-foreground text-xs py-2.5 px-6 flex flex-wrap items-center justify-between border-b-2 border-b-accent">
         <div className="flex items-center gap-4">
-          <span className="font-semibold tracking-wide">
+          <span className="font-bold tracking-wide">
             UNIVERSIDAD CENTRAL (UNICEN) • BOLIVIA
           </span>
-          <span className="hidden sm:inline text-white/70">
+          <span className="hidden sm:inline text-white/75">
             Sedes: Cochabamba • La Paz • Santa Cruz
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-2 py-0.5 rounded bg-[#E05A1B] text-white font-bold">
+          <span className="px-2.5 py-0.5 rounded bg-accent text-accent-foreground font-extrabold">
             PORTAL SIIA 2026
           </span>
-          <span className="text-white/80 font-mono">PASETO v4.public (Ed25519)</span>
+          <span className="text-white/80 font-mono hidden md:inline">
+            PASETO v4.public (Ed25519)
+          </span>
         </div>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-6xl w-full mx-auto my-6 lg:my-10 px-4 gap-8 items-center">
-        {/* Columna Izquierda: Identidad UNICEN */}
-        <div className="lg:col-span-7 bg-[#002B49] text-white rounded-2xl p-8 lg:p-10 shadow-xl relative overflow-hidden">
+        {/* Columna Izquierda: Identidad UNICEN con Logo Oficial */}
+        <div className="lg:col-span-7 bg-primary text-primary-foreground rounded-2xl p-8 lg:p-10 shadow-xl relative overflow-hidden border border-white/10">
           <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold">
-              <Building2 className="w-3.5 h-3.5 text-[#E05A1B]" />
-              <span>Comprometida con tu Futuro Laboral</span>
+            {/* Contenedor Blanco de Alto Contraste para el Logo Oficial UNICEN */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white rounded-xl px-5 py-3 shadow-md inline-flex items-center">
+                <img
+                  src={unicenLogo}
+                  alt="Logo Oficial UNICEN - Comprometida con tu Futuro Laboral"
+                  className="h-12 w-auto object-contain"
+                />
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold">
+                <Building2 className="w-3.5 h-3.5 text-accent" />
+                <span>Sistema Académico Oficial</span>
+              </div>
             </div>
 
             <div>
               <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                UNICEN <span className="text-[#E05A1B]">SIIA 2026</span>
+                Portal Académico <span className="text-accent">SIIA 2026</span>
               </h1>
               <p className="mt-2 text-slate-200 text-sm lg:text-base leading-relaxed">
                 Sistema Integrado de Información Académica. Gestión de oferta de
@@ -117,7 +131,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </div>
 
             <div className="space-y-3 pt-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#E05A1B]">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 Acceso Rápido de Demostración (1 Clic para Evaluadores):
               </p>
               <div className="grid gap-2.5">
@@ -133,14 +147,14 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                         setPassword('Unicen2026!');
                         performLogin(acc.email, 'Unicen2026!');
                       }}
-                      className={`w-full text-left bg-white/95 hover:bg-white text-slate-900 rounded-xl p-3.5 transition-all flex items-center justify-between shadow-sm group ${acc.color}`}
+                      className={`w-full text-left bg-white/95 hover:bg-white text-slate-900 rounded-xl p-3.5 transition-all flex items-center justify-between shadow-sm group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${acc.color}`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-slate-100 text-[#002B49]">
-                          <Icon className="w-5 h-5" />
+                        <div className="p-2 rounded-lg bg-slate-100 text-primary">
+                          <Icon className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
-                          <div className="font-bold text-sm text-[#002B49] flex items-center gap-2">
+                          <div className="font-bold text-sm text-primary flex items-center gap-2">
                             {acc.title}
                             <Badge
                               variant={
@@ -159,7 +173,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                           </p>
                         </div>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#E05A1B] group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-accent group-hover:translate-x-1 transition-all" />
                     </button>
                   );
                 })}
@@ -169,18 +183,28 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Columna Derecha: Formulario de Autenticación */}
-        <Card className="lg:col-span-5 p-8 shadow-lg border-t-4 border-t-[#E05A1B]">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-[#002B49]">
-              Ingreso Institucional SIIA
-            </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Autenticación criptográfica mediante tokens PASETO v4.public
-            </p>
+        <Card className="lg:col-span-5 p-8 shadow-lg border-t-4 border-t-accent">
+          <div className="mb-6 flex flex-col items-start gap-3">
+            <img
+              src={unicenLogo}
+              alt="UNICEN"
+              className="h-10 w-auto object-contain"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-primary">
+                Ingreso Institucional SIIA
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Autenticación criptográfica mediante tokens PASETO v4.public
+              </p>
+            </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+            <div
+              role="alert"
+              className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium"
+            >
               {error}
             </div>
           )}
@@ -195,7 +219,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="usuario@unicen.edu.bo"
               />
-              <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-8" />
+              <Mail
+                className="w-4 h-4 text-slate-400 absolute right-3 top-8 pointer-events-none"
+                aria-hidden="true"
+              />
             </div>
 
             <div className="relative">
@@ -207,7 +234,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
               />
-              <Lock className="w-4 h-4 text-slate-400 absolute right-3 top-8" />
+              <Lock
+                className="w-4 h-4 text-slate-400 absolute right-3 top-8 pointer-events-none"
+                aria-hidden="true"
+              />
             </div>
 
             <Button
@@ -221,11 +251,16 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </Button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-slate-100 text-xs text-slate-500 space-y-1">
-            <p className="font-semibold text-slate-700">
+          <div className="mt-6 pt-5 border-t border-border text-xs text-muted-foreground space-y-1">
+            <p className="font-semibold text-foreground">
               Credenciales por defecto del Seeder:
             </p>
-            <p>• Contraseña universal demo: <code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[#002B49]">Unicen2026!</code></p>
+            <p>
+              • Contraseña universal demo:{' '}
+              <code className="font-mono bg-muted px-1.5 py-0.5 rounded text-primary font-bold">
+                Unicen2026!
+              </code>
+            </p>
           </div>
         </Card>
       </div>
