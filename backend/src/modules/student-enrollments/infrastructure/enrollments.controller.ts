@@ -55,7 +55,7 @@ export class EnrollmentsController {
   }
 
   @Get('student/:studentId')
-  @Roles('ADMINISTRADOR', 'DOCENTE')
+  @Roles('ADMINISTRADOR')
   async getStudentEnrollments(
     @Param('studentId', ParseIntPipe) studentId: number,
     @Query('periodId') periodId?: string,

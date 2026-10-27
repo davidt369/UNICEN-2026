@@ -34,9 +34,10 @@ export class GradingController {
   @Get('course/:courseOfferingId/gradebook')
   @Roles('DOCENTE', 'ADMINISTRADOR')
   async getCourseGradebook(
+    @CurrentUser() user: AuthenticatedUser,
     @Param('courseOfferingId', ParseIntPipe) courseOfferingId: number,
   ) {
-    return this.gradingService.getCourseGradebook(courseOfferingId);
+    return this.gradingService.getCourseGradebook(courseOfferingId, user);
   }
 
   @Get('my-kardex')
@@ -46,7 +47,7 @@ export class GradingController {
   }
 
   @Get('student/:studentId/kardex')
-  @Roles('ADMINISTRADOR', 'DOCENTE')
+  @Roles('ADMINISTRADOR')
   async getStudentKardex(@Param('studentId', ParseIntPipe) studentId: number) {
     return this.gradingService.getStudentKardex(studentId);
   }

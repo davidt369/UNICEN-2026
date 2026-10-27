@@ -88,6 +88,7 @@ export interface IGradingRepository {
     score: number;
     feedback?: string;
     gradedById: number;
+    userRole?: string;
   }): Promise<StudentGradebookRow>;
   getCourseGradebook(courseOfferingId: number): Promise<CourseGradebookResponse>;
   getStudentKardex(studentId: number): Promise<AcademicKardexResponse>;

@@ -21,6 +21,10 @@ import {
 import { PasetoAuthGuard } from '../../identity-and-access/infrastructure/guards/paseto-auth.guard';
 import { RolesGuard } from '../../identity-and-access/infrastructure/guards/roles.guard';
 import { Roles } from '../../../core/decorators/roles.decorator';
+import {
+  AuthenticatedUser,
+  CurrentUser,
+} from '../../../core/decorators/current-user.decorator';
 
 @Controller('course-offerings')
 @UseGuards(PasetoAuthGuard, RolesGuard)
@@ -79,10 +83,11 @@ export class CourseOfferingsController {
   @Put(':id/evaluations')
   @Roles('ADMINISTRADOR', 'DOCENTE')
   async updateEvaluations(
+    @CurrentUser() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCourseEvaluationsDto,
   ) {
-    return this.offeringsService.updateCourseEvaluations(id, dto);
+    return this.offeringsService.updateCourseEvaluations(id, dto, user);
   }
 
   @Delete(':id')

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ import {
   ScheduleBlockDto,
   UpdateCourseEvaluationsDto,
 } from './dtos/course-offerings.dto';
+import { AuthenticatedUser } from '../../../core/decorators/current-user.decorator';
 
 /**
  * ============================================================================
@@ -120,8 +122,14 @@ export class CourseOfferingsService {
   async updateCourseEvaluations(
     courseOfferingId: number,
     dto: UpdateCourseEvaluationsDto,
+    user?: AuthenticatedUser,
   ) {
-    await this.getOfferingById(courseOfferingId);
+    const offering = await this.getOfferingById(courseOfferingId);
+    if (user && user.role === 'DOCENTE' && offering.teacherId !== user.id) {
+      throw new ForbiddenException(
+        'Acceso denegado: No tiene permisos para modificar el esquema evaluativo de un curso asignado a otro docente.',
+      );
+    }
     this.validateEvaluationsWeight(dto.evaluations);
 
     return this.offeringsRepo.updateEvaluations(

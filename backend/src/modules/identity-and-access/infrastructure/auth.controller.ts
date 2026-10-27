@@ -44,7 +44,7 @@ export class AuthController {
 
   @Get('users')
   @UseGuards(PasetoAuthGuard, RolesGuard)
-  @Roles('ADMINISTRADOR', 'DOCENTE')
+  @Roles('ADMINISTRADOR')
   async listUsers(@Query('role') role?: UserRole) {
     return this.authService.listUsers(role);
   }

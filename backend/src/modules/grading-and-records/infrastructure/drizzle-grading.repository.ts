@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -46,6 +47,7 @@ export class DrizzleGradingRepository implements IGradingRepository {
     score: number;
     feedback?: string;
     gradedById: number;
+    userRole?: string;
   }): Promise<StudentGradebookRow> {
     const courseOfferingId = await this.db.transaction(async (tx) => {
       const [enrollment] = await tx
@@ -64,6 +66,20 @@ export class DrizzleGradingRepository implements IGradingRepository {
         throw new NotFoundException(
           'La inscripción no existe o fue retirada.',
         );
+      }
+
+      if (params.userRole === 'DOCENTE') {
+        const [offering] = await tx
+          .select({ teacherId: courseOfferingsTable.teacherId })
+          .from(courseOfferingsTable)
+          .where(eq(courseOfferingsTable.id, enrollment.courseOfferingId))
+          .limit(1);
+
+        if (!offering || offering.teacherId !== params.gradedById) {
+          throw new ForbiddenException(
+            'Acceso denegado: No tiene permisos para registrar calificaciones en un curso asignado a otro docente.',
+          );
+        }
       }
 
       const [evaluation] = await tx
