@@ -8,7 +8,16 @@ import {
   Trash2,
 } from 'lucide-react';
 import { apiRequest, AuthUser } from '../../lib/api';
-import { Badge, Button, Card, Input } from '../../components/ui/primitives';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+} from '../../components/ui/primitives';
 
 export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
   const [courses, setCourses] = useState<any[]>([]);
@@ -20,13 +29,11 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
     text: string;
   } | null>(null);
 
-  // Estado de edición de evaluaciones dinámicas
   const [editingEvals, setEditingEvals] = useState(false);
   const [evalDrafts, setEvalDrafts] = useState<
     Array<{ name: string; weightPercentage: number }>
   >([]);
 
-  // Estado temporal de notas en la planilla: clave `${enrollmentId}_${evaluationId}`
   const [scoreInputs, setScoreInputs] = useState<Record<string, string>>({});
   const [feedbackInputs, setFeedbackInputs] = useState<Record<string, string>>(
     {},
@@ -36,8 +43,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
   const loadCourses = async () => {
     setLoading(true);
     try {
-      const query =
-        user.role === 'DOCENTE' ? `?teacherId=${user.id}` : '';
+      const query = user.role === 'DOCENTE' ? `?teacherId=${user.id}` : '';
       const list = await apiRequest<any[]>(`/course-offerings${query}`);
       setCourses(list);
       if (list.length > 0) {
@@ -89,7 +95,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
     if (rawVal === undefined || rawVal === '') {
       setFeedback({
         type: 'error',
-        text: 'Debe ingresar una calificación numérica entre 0 y 100.',
+        text: 'Ingrese una calificación numérica válida entre 0 y 100 puntos.',
       });
       return;
     }
@@ -108,7 +114,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
       });
       setFeedback({
         type: 'success',
-        text: 'Calificación registrada y nota acumulada recalculada mediante Patrón Strategy.',
+        text: 'Calificación registrada y nota acumulada recalculada mediante WeightedEvaluationStrategy.',
       });
       if (selectedCourseId) await loadGradebook(selectedCourseId);
     } catch (err: any) {
@@ -135,7 +141,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
       setEditingEvals(false);
       setFeedback({
         type: 'success',
-        text: 'Estructura de evaluaciones dinámicas actualizada (100% verificado).',
+        text: 'Esquema de evaluaciones ponderadas actualizado (100% verificado).',
       });
       await loadGradebook(selectedCourseId);
     } catch (err: any) {
@@ -150,20 +156,25 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
 
   return (
     <div className="space-y-6">
-      {/* Selector de Curso Docente */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-[#002B49]">
-            Planilla Docente de Calificaciones y Evaluaciones Dinámicas
+      {/* Barra Superior de Selección de Curso Docente */}
+      <div className="bg-white p-5 rounded-lg border border-border shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-bold text-[#002B49] tracking-tight">
+            Planilla Docente de Calificaciones y Ponderación Dinámica
           </h2>
-          <p className="text-xs text-slate-500">
-            Cálculo automático mediante WeightedEvaluationStrategy (Aprobación &gt;= 51.0 pts)
+          <p className="text-xs text-slate-600">
+            Cálculo automático de nota acumulada mediante el patrón{' '}
+            <code className="font-mono text-[11px] bg-slate-100 px-1 py-0.5 rounded">
+              WeightedEvaluationStrategy
+            </code>{' '}
+            (nota mínima de aprobación: 51.0 / 100 pts).
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <select
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-[#002B49]"
+            aria-label="Seleccionar Paralelo Docente"
+            className="h-9 rounded-md border border-input bg-background px-3 text-xs font-semibold text-[#002B49] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={selectedCourseId ?? ''}
             onChange={(e) => {
               const id = Number(e.target.value);
@@ -173,7 +184,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
           >
             {courses.map((c) => (
               <option key={c.id} value={c.id}>
-                [{c.periodCode}] {c.subjectCode} - {c.subjectName} ({c.groupCode})
+                [{c.periodCode}] {c.subjectCode} — {c.subjectName} ({c.groupCode})
               </option>
             ))}
           </select>
@@ -183,7 +194,7 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
             size="sm"
             onClick={() => setEditingEvals(!editingEvals)}
           >
-            <Sliders className="w-4 h-4 text-[#E05A1B]" />
+            <Sliders className="w-3.5 h-3.5 text-[#002B49]" />
             Configurar Ponderaciones (%)
           </Button>
         </div>
@@ -191,140 +202,148 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
 
       {feedback && (
         <div
-          className={`p-4 rounded-xl border flex items-start gap-3 ${
+          role="alert"
+          className={`p-4 rounded-lg border flex items-start gap-3 text-xs ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+              : 'bg-red-50 border-red-200 text-red-900'
           }`}
         >
           {feedback.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
           ) : (
-            <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
           )}
-          <div className="text-sm font-medium">{feedback.text}</div>
+          <div className="font-medium leading-relaxed">{feedback.text}</div>
         </div>
       )}
 
       {/* Panel de Configuración de Evaluaciones Dinámicas */}
       {editingEvals && (
-        <Card className="p-5 border-2 border-[#E05A1B]/40 bg-orange-50/20 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-[#002B49]">
-                Estructura Dinámica de Evaluaciones del Curso
-              </h3>
-              <p className="text-xs text-slate-600">
-                La suma total de las ponderaciones debe ser exactamente 100%.
-              </p>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <CardTitle>
+                Configuración de Evaluaciones Ponderadas del Paralelo
+              </CardTitle>
+              <CardDescription>
+                La suma exacta de todos los rubros evaluativos del curso debe
+                totalizar 100%.
+              </CardDescription>
             </div>
             <Badge
               variant={
                 Math.abs(totalDraftWeight - 100) < 0.01 ? 'success' : 'danger'
               }
+              className="tabular-nums"
             >
-              Suma actual: {totalDraftWeight}% / 100%
+              Total configurado: {totalDraftWeight}% / 100%
             </Badge>
-          </div>
+          </CardHeader>
 
-          <div className="space-y-2">
-            {evalDrafts.map((ev, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <Input
-                  placeholder="Nombre de la evaluación (ej. 1er Parcial)"
-                  value={ev.name}
-                  onChange={(e) => {
-                    const copy = [...evalDrafts];
-                    copy[idx].name = e.target.value;
-                    setEvalDrafts(copy);
-                  }}
-                  className="flex-1"
-                />
-                <div className="w-32">
+          <CardContent className="space-y-4">
+            <div className="space-y-2.5">
+              {evalDrafts.map((ev, idx) => (
+                <div key={idx} className="flex items-center gap-3">
                   <Input
-                    type="number"
-                    min={1}
-                    max={100}
-                    value={ev.weightPercentage}
+                    placeholder="Nombre del rubro (ej. Primer Parcial)"
+                    value={ev.name}
                     onChange={(e) => {
                       const copy = [...evalDrafts];
-                      copy[idx].weightPercentage = Number(e.target.value);
+                      copy[idx].name = e.target.value;
                       setEvalDrafts(copy);
                     }}
+                    className="flex-1"
                   />
+                  <div className="w-32">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={100}
+                      value={ev.weightPercentage}
+                      onChange={(e) => {
+                        const copy = [...evalDrafts];
+                        copy[idx].weightPercentage = Number(e.target.value);
+                        setEvalDrafts(copy);
+                      }}
+                    />
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-200 text-red-700 hover:bg-red-50"
+                    disabled={evalDrafts.length <= 1}
+                    onClick={() =>
+                      setEvalDrafts(evalDrafts.filter((_, i) => i !== idx))
+                    }
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  disabled={evalDrafts.length <= 1}
-                  onClick={() =>
-                    setEvalDrafts(evalDrafts.filter((_, i) => i !== idx))
-                  }
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setEvalDrafts([
-                  ...evalDrafts,
-                  { name: 'Nueva Evaluación', weightPercentage: 10 },
-                ])
-              }
-            >
-              <Plus className="w-4 h-4" />
-              Añadir Rubro de Evaluación
-            </Button>
-            <Button
-              variant="orange"
-              size="sm"
-              onClick={handleSaveEvaluationsConfig}
-            >
-              <Save className="w-4 h-4" />
-              Guardar Ponderaciones del Curso
-            </Button>
-          </div>
+            <div className="flex items-center justify-between pt-2 border-t border-border/60">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setEvalDrafts([
+                    ...evalDrafts,
+                    { name: 'Evaluación Adicional', weightPercentage: 10 },
+                  ])
+                }
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Añadir Rubro Evaluativo
+              </Button>
+              <Button
+                variant="orange"
+                size="sm"
+                onClick={handleSaveEvaluationsConfig}
+              >
+                <Save className="w-3.5 h-3.5" />
+                Guardar Esquema de Ponderación
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       )}
 
       {/* Planilla de Estudiantes Inscritos y Registro de Notas */}
       {loading || !gradebook ? (
         <Card className="p-8 text-center text-sm text-slate-500">
-          Cargando planilla docente...
+          Cargando planilla oficial de calificaciones...
         </Card>
       ) : gradebook.students.length === 0 ? (
         <Card className="p-8 text-center text-sm text-slate-500">
-          Este curso aún no tiene estudiantes inscritos activos.
+          Este paralelo no registra estudiantes inscritos activos en la gestión.
         </Card>
       ) : (
         <div className="space-y-4">
           {gradebook.students.map((st: any) => (
-            <Card key={st.enrollmentId} className="p-5 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <div>
+            <Card key={st.enrollmentId}>
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
+                <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold bg-slate-100 px-2 py-0.5 rounded text-[#002B49]">
+                    <span className="font-mono text-xs font-bold bg-slate-100 px-1.5 py-0.5 rounded text-[#002B49] tabular-nums">
                       {st.studentRegistrationNumber}
                     </span>
-                    <h4 className="font-bold text-[#002B49] text-base">
+                    <CardTitle className="text-sm font-bold text-[#002B49]">
                       {st.studentName}
-                    </h4>
+                    </CardTitle>
                   </div>
-                  <p className="text-xs text-slate-500">{st.studentEmail}</p>
+                  <CardDescription className="font-mono text-xs">
+                    {st.studentEmail}
+                  </CardDescription>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 tabular-nums">
                   <div className="text-right">
-                    <p className="text-[11px] uppercase font-bold text-slate-400">
-                      Nota Final Ponderada ({st.evaluatedWeightPercentage}% eval.)
+                    <p className="text-[11px] font-medium text-slate-500">
+                      Nota Acumulada ({st.evaluatedWeightPercentage}% evaluado)
                     </p>
-                    <p className="text-xl font-black text-[#002B49]">
+                    <p className="text-lg font-bold text-[#002B49]">
                       {st.finalScore ?? 0} / 100
                     </p>
                   </div>
@@ -334,81 +353,87 @@ export const TeacherPortalView: React.FC<{ user: AuthUser }> = ({ user }) => {
                         ? 'success'
                         : st.status === 'REPROBADA'
                           ? 'danger'
-                          : 'orange'
+                          : 'navy'
                     }
                   >
                     {st.status}
                   </Badge>
                 </div>
-              </div>
+              </CardHeader>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
                 {st.grades.map((g: any) => {
                   const key = `${st.enrollmentId}_${g.evaluationId}`;
                   return (
                     <div
                       key={g.evaluationId}
-                      className="p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-2"
+                      className="p-3.5 rounded-md border border-border bg-slate-50/70 space-y-2.5 flex flex-col justify-between"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#002B49]">
-                          {g.evaluationName}
-                        </span>
-                        <Badge variant="navy">{g.weightPercentage}%</Badge>
-                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-[#002B49]">
+                            {g.evaluationName}
+                          </span>
+                          <Badge variant="navy" className="tabular-nums">
+                            {g.weightPercentage}%
+                          </Badge>
+                        </div>
 
-                      <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step="0.5"
+                            placeholder="0 - 100"
+                            aria-label={`Nota ${g.evaluationName} para ${st.studentName}`}
+                            value={scoreInputs[key] ?? ''}
+                            onChange={(e) =>
+                              setScoreInputs({
+                                ...scoreInputs,
+                                [key]: e.target.value,
+                              })
+                            }
+                            className="w-24 h-8 rounded-md border border-input bg-white px-2.5 text-xs font-bold text-[#002B49] tabular-nums focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          />
+                          <span className="text-[11px] font-mono text-slate-600 tabular-nums">
+                            {g.score >= 0
+                              ? `+${g.weightedContribution} pts`
+                              : 'Sin registro'}
+                          </span>
+                        </div>
+
                         <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          step="0.5"
-                          placeholder="0 - 100"
-                          value={scoreInputs[key] ?? ''}
+                          type="text"
+                          placeholder="Observación docente..."
+                          aria-label={`Observación ${g.evaluationName} para ${st.studentName}`}
+                          value={feedbackInputs[key] ?? ''}
                           onChange={(e) =>
-                            setScoreInputs({
-                              ...scoreInputs,
+                            setFeedbackInputs({
+                              ...feedbackInputs,
                               [key]: e.target.value,
                             })
                           }
-                          className="w-24 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-bold text-[#002B49]"
+                          className="w-full h-8 rounded-md border border-input bg-white px-2.5 text-xs text-slate-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         />
-                        <span className="text-xs text-slate-500">
-                          {g.score >= 0
-                            ? `(${g.weightedContribution} pts)`
-                            : '(Sin nota)'}
-                        </span>
                       </div>
-
-                      <input
-                        type="text"
-                        placeholder="Observación / retroalimentación..."
-                        value={feedbackInputs[key] ?? ''}
-                        onChange={(e) =>
-                          setFeedbackInputs({
-                            ...feedbackInputs,
-                            [key]: e.target.value,
-                          })
-                        }
-                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
-                      />
 
                       <Button
                         variant="primary"
                         size="sm"
-                        className="w-full"
+                        className="w-full h-8 text-xs"
                         disabled={savingKey === key}
                         onClick={() =>
                           handleSaveGrade(st.enrollmentId, g.evaluationId)
                         }
                       >
                         <Save className="w-3.5 h-3.5" />
-                        {savingKey === key ? 'Guardando...' : 'Guardar Nota'}
+                        {savingKey === key ? 'Guardando...' : 'Registrar Nota'}
                       </Button>
                     </div>
                   );
                 })}
-              </div>
+              </CardContent>
             </Card>
           ))}
         </div>

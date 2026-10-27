@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Building2,
   GraduationCap,
   Layers,
-  Users,
-  ShieldCheck,
-  TrendingUp,
   ArrowUpRight,
-  Calendar,
   Clock,
   CheckCircle2,
   AlertTriangle,
   BookOpen,
+  Building2,
 } from 'lucide-react';
 import { apiRequest, AuthUser } from '../../lib/api';
 import {
@@ -82,7 +78,6 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
     (o) => o.availableQuota <= 0,
   ).length;
 
-  // Agrupación de métricas por carrera
   const careerStats = careers.map((car) => {
     const carOfferings = currentOfferings.filter((o) => o.careerId === car.id);
     const carQuota = carOfferings.reduce((a, b) => a + b.maxQuota, 0);
@@ -100,263 +95,204 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
   if (loading) {
     return (
       <Card className="p-10 text-center text-sm text-slate-500">
-        Cargando métricas ejecutivas del Dashboard Institucional SIIA UNICEN...
+        Consultando estado operativo del Sistema Integrado de Información Académica...
       </Card>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Banner Ejecutivo Institucional UNICEN */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#002B49] via-[#003865] to-[#002B49] text-white p-6 lg:p-8 shadow-lg border-b-4 border-b-[#E05A1B] flex flex-wrap items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold">
-            <Building2 className="w-3.5 h-3.5 text-[#E05A1B]" />
-            <span>
-              Panel Ejecutivo SIIA 2026 • Universidad Central (UNICEN)
-            </span>
+      {/* Cabecera Ejecutiva de Espacio de Trabajo */}
+      <div className="bg-white border border-border rounded-lg p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h2 className="text-lg font-bold text-[#002B49] tracking-tight">
+              Centro de Operaciones Académicas — {user.fullName}
+            </h2>
+            <Badge
+              variant={currentPeriod?.enrollmentsOpen ? 'success' : 'danger'}
+            >
+              {currentPeriod?.code}:{' '}
+              {currentPeriod?.enrollmentsOpen
+                ? 'Matrícula Abierta'
+                : 'Matrícula Cerrada'}
+            </Badge>
           </div>
-          <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight">
-            Bienvenido,{' '}
-            <span className="text-[#E05A1B]">{user.fullName}</span>
-          </h1>
-          <p className="text-xs lg:text-sm text-slate-200 leading-relaxed">
-            Monitoreo en tiempo real de oferta académica, control transaccional
-            de cupos, validación de horarios y rendimiento estudiantil en las
-            sedes de Cochabamba, La Paz y Santa Cruz.
+          <p className="text-xs text-slate-600">
+            Registro institucional{' '}
+            <span className="font-mono font-semibold text-slate-800 tabular-nums">
+              {user.registrationNumber}
+            </span>{' '}
+            • Control de oferta curricular, cupos transaccionales y evaluación
+            ponderada en tiempo real.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {user.role === 'ESTUDIANTE' && (
             <>
               <Button
                 variant="orange"
+                size="sm"
                 onClick={() => onNavigate('enrollments')}
               >
                 <GraduationCap className="w-4 h-4" />
                 Inscribir Materias
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-3.5 h-3.5" />
               </Button>
               <Button
                 variant="outline"
-                className="bg-white/10 text-white border-white/25 hover:bg-white/20"
+                size="sm"
                 onClick={() => onNavigate('kardex')}
               >
-                Ver Kardex Oficial
+                Consultar Kardex Oficial
               </Button>
             </>
           )}
           {user.role === 'DOCENTE' && (
-            <Button variant="orange" onClick={() => onNavigate('grading')}>
+            <Button
+              variant="orange"
+              size="sm"
+              onClick={() => onNavigate('grading')}
+            >
               <BookOpen className="w-4 h-4" />
-              Abrir Planilla de Calificaciones
-              <ArrowUpRight className="w-4 h-4" />
+              Abrir Planilla Docente
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </Button>
           )}
           {user.role === 'ADMINISTRADOR' && (
-            <Button variant="orange" onClick={() => onNavigate('admin')}>
+            <Button
+              variant="orange"
+              size="sm"
+              onClick={() => onNavigate('admin')}
+            >
               <Layers className="w-4 h-4" />
-              Administrar Gestiones y Oferta
-              <ArrowUpRight className="w-4 h-4" />
+              Gestionar Catálogo y Períodos
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </Button>
           )}
         </div>
       </div>
 
-      {/* 4 Tarjetas KPI Empresariales (shadcn/ui Card) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-t-4 border-t-[#002B49]">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Gestión Académica Vigente
-            </CardTitle>
-            <Calendar className="w-4 h-4 text-[#002B49]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-black text-[#002B49]">
-              {currentPeriod?.code || 'I-2026'}
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <Badge
-                variant={currentPeriod?.enrollmentsOpen ? 'success' : 'danger'}
-              >
-                {currentPeriod?.enrollmentsOpen
-                  ? 'Inscripciones Abiertas'
-                  : 'Inscripciones Cerradas'}
-              </Badge>
-            </div>
-            <p className="text-[11px] text-slate-500 mt-2">
-              {currentPeriod?.startDate} al {currentPeriod?.endDate}
-            </p>
-          </CardContent>
-        </Card>
+      {/* Cinta Unificada de Indicadores Operativos (Sin tarjetas flotantes decorativas) */}
+      <div className="bg-white border border-border rounded-lg shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
+        <div className="p-5 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">
+              Gestión Académica Activa
+            </span>
+            <span className="text-[11px] font-mono text-slate-500 tabular-nums">
+              {currentPeriod?.startDate} — {currentPeriod?.endDate}
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-[#002B49] tabular-nums">
+            {currentPeriod?.code || 'I-2026'}
+          </div>
+          <p className="text-xs text-slate-500 truncate">
+            {currentPeriod?.name}
+          </p>
+        </div>
 
-        <Card className="border-t-4 border-t-[#E05A1B]">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        <div className="p-5 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">
               Ocupación de Cupos ({currentPeriod?.code})
-            </CardTitle>
-            <Users className="w-4 h-4 text-[#E05A1B]" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline justify-between">
-              <span className="text-2xl font-black text-[#002B49]">
-                {totalEnrolled} / {totalQuota}
-              </span>
-              <span className="text-xs font-bold text-[#E05A1B]">
-                {occupancyRate}% ocupado
-              </span>
-            </div>
-            <Progress value={occupancyRate} className="mt-2.5" />
-            <p className="text-[11px] text-slate-500 mt-2 flex items-center gap-1">
-              {fullCoursesCount > 0 ? (
-                <>
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  <span>{fullCoursesCount} curso(s) con cupo agotado</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Todos los cursos con cupo disponible</span>
-                </>
-              )}
-            </p>
-          </CardContent>
-        </Card>
+            </span>
+            <span className="text-xs font-bold text-[#002B49] tabular-nums">
+              {occupancyRate}%
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-[#002B49] tabular-nums">
+            {totalEnrolled}{' '}
+            <span className="text-sm font-normal text-slate-500">
+              / {totalQuota} plazas
+            </span>
+          </div>
+          <div className="pt-1">
+            <Progress value={occupancyRate} className="h-1.5" />
+          </div>
+          <p className="text-[11px] text-slate-600 flex items-center gap-1 pt-0.5">
+            {fullCoursesCount > 0 ? (
+              <>
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span className="tabular-nums">
+                  {fullCoursesCount} paralelo(s) sin cupo disponible
+                </span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Todos los paralelos con plazas abiertas</span>
+              </>
+            )}
+          </p>
+        </div>
 
-        <Card className="border-t-4 border-t-[#003865]">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Catálogo y Oferta Activa
-            </CardTitle>
-            <TrendingUp className="w-4 h-4 text-[#003865]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-black text-[#002B49]">
-              {currentOfferings.length} Cursos
-            </div>
-            <p className="text-xs font-semibold text-slate-700 mt-1">
-              {subjects.length} Materias en {careers.length} Carreras
-            </p>
-            <p className="text-[11px] text-slate-500 mt-1.5">
-              {campuses.length} Sedes Nacionales (CBBA • LPZ • SCZ)
-            </p>
-          </CardContent>
-        </Card>
+        <div className="p-5 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">
+              Oferta Académica Habilitada
+            </span>
+            <span className="text-[11px] font-mono text-slate-500 tabular-nums">
+              {campuses.length} Sedes
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-[#002B49] tabular-nums">
+            {currentOfferings.length}{' '}
+            <span className="text-sm font-normal text-slate-500">
+              paralelos activos
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 tabular-nums">
+            {subjects.length} asignaturas en {careers.length} carreras
+          </p>
+        </div>
 
-        <Card className="border-t-4 border-t-emerald-600">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Integridad & Seguridad SIIA
-            </CardTitle>
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-lg font-extrabold text-[#002B49]">
-              PASETO v4.public
-            </div>
-            <div className="mt-1.5 flex flex-wrap gap-1">
-              <Badge variant="success">Soft Delete Activo</Badge>
-              <Badge variant="navy">ACID Lock</Badge>
-            </div>
-            <p className="text-[11px] text-slate-500 mt-2">
-              Firma asimétrica Ed25519 + Estrategia Ponderada
-            </p>
-          </CardContent>
-        </Card>
+        <div className="p-5 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">
+              Integridad Transaccional
+            </span>
+            <Badge variant="success" className="text-[10px] py-0 px-1.5">
+              ACID Activo
+            </Badge>
+          </div>
+          <div className="text-base font-bold text-[#002B49] font-mono">
+            PASETO v4.public
+          </div>
+          <p className="text-xs text-slate-500">
+            Bloqueo pesimista de cupos + Baja lógica auditable
+          </p>
+        </div>
       </div>
 
-      {/* Sección Intermedia: Distribución por Carrera y Sedes */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Card className="lg:col-span-7">
-          <CardHeader>
-            <CardTitle className="text-base">
-              Demanda Académica por Carrera de Licenciatura
-            </CardTitle>
-            <CardDescription>
-              Porcentaje de ocupación de matrícula en los programas oficiales de
-              UNICEN ({currentPeriod?.code})
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {careerStats.map((car) => (
-              <div key={car.id} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="navy">{car.code}</Badge>
-                    <span className="font-bold text-slate-800">{car.name}</span>
-                  </div>
-                  <span className="text-slate-600 font-semibold">
-                    {car.enrolled}/{car.quota} cupos ({car.pct}%)
-                  </span>
-                </div>
-                <Progress
-                  value={car.pct}
-                  indicatorClassName={
-                    car.pct >= 90 ? 'bg-red-600' : 'bg-[#002B49]'
-                  }
-                />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-5">
-          <CardHeader>
-            <CardTitle className="text-base">
-              Infraestructura de Sedes UNICEN
-            </CardTitle>
-            <CardDescription>
-              Sedes habilitadas en el Sistema Integrado de Información Académica
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {campuses.map((camp) => (
-              <div
-                key={camp.id}
-                className="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-1"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-[#002B49]">
-                    {camp.name}
-                  </span>
-                  <Badge variant="orange">{camp.city}</Badge>
-                </div>
-                <p className="text-xs text-slate-600">{camp.address}</p>
-                <p className="text-[11px] font-mono text-slate-400">
-                  Código SIIA: {camp.code}
-                </p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabla Ejecutiva shadcn/ui de Oferta Académica y Cupos en Tiempo Real */}
+      {/* Tabla Principal: Matriz de Cursos Ofertados, Horarios y Cupos en Tiempo Real */}
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
-          <div>
-            <CardTitle className="text-base">
-              Matriz de Cursos Ofertados, Horarios y Control de Cupos ({currentPeriod?.code})
+          <div className="space-y-0.5">
+            <CardTitle>
+              Matriz de Cursos Ofertados, Horarios y Control de Cupos (
+              {currentPeriod?.code})
             </CardTitle>
             <CardDescription>
-              Vista consolidada con estado de cupos en tiempo real y bloques de
-              horario validados contra colisiones.
+              Estado de matrícula en tiempo real y bloques horarios verificados
+              contra solapamientos.
             </CardDescription>
           </div>
-          <Badge variant="navy">{currentOfferings.length} Cursos Activos</Badge>
+          <Badge variant="navy" className="tabular-nums">
+            {currentOfferings.length} Paralelos Publicados
+          </Badge>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Sigla & Materia</TableHead>
-                <TableHead>Paralelo / Modalidad</TableHead>
+                <TableHead>Sigla & Asignatura</TableHead>
+                <TableHead>Paralelo / Sede</TableHead>
                 <TableHead>Docente Titular</TableHead>
-                <TableHead>Bloques Horarios</TableHead>
-                <TableHead>Ocupación de Cupo</TableHead>
-                <TableHead className="text-right">Estado</TableHead>
+                <TableHead>Horario de Clases</TableHead>
+                <TableHead>Matrícula</TableHead>
+                <TableHead className="text-right">Disponibilidad</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -369,18 +305,24 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
                 return (
                   <TableRow key={off.id}>
                     <TableCell>
-                      <div className="font-bold text-[#002B49]">
-                        {off.subjectCode} — {off.subjectName}
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                          {off.subjectCode}
+                        </span>
+                        <span className="font-semibold text-slate-900">
+                          {off.subjectName}
+                        </span>
                       </div>
-                      <div className="text-xs text-slate-500">
-                        {off.careerName} • Semestre {off.semesterLevel} ({off.credits} Cr.)
+                      <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
+                        {off.careerName} • Semestre {off.semesterLevel} (
+                        {off.credits} Cr.)
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="font-semibold text-xs text-slate-800">
                         {off.groupCode}
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-xs text-slate-500">
                         {off.modality} • {off.campusName.split('(')[0]}
                       </div>
                     </TableCell>
@@ -388,7 +330,7 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
                       <div className="text-xs font-semibold text-slate-800">
                         {off.teacherName}
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-slate-500 font-mono">
                         {off.teacherEmail}
                       </div>
                     </TableCell>
@@ -397,36 +339,39 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
                         {off.schedules?.map((s: any) => (
                           <span
                             key={s.id}
-                            className="inline-flex items-center gap-1 text-[11px] bg-slate-100 px-2 py-0.5 rounded text-slate-700 w-fit"
+                            className="inline-flex items-center gap-1.5 text-[11px] bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded text-slate-700 w-fit tabular-nums"
                           >
-                            <Clock className="w-3 h-3 text-[#E05A1B]" />
-                            <strong>{s.dayOfWeek}:</strong> {s.startTime}-
-                            {s.endTime} ({s.classroom})
+                            <Clock className="w-3 h-3 text-[#002B49]" />
+                            <strong className="font-semibold">
+                              {s.dayOfWeek}:
+                            </strong>{' '}
+                            {s.startTime}–{s.endTime} ({s.classroom})
                           </span>
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell className="w-48">
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span>
+                    <TableCell className="w-44">
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-semibold tabular-nums">
+                          <span className="text-slate-800">
                             {off.enrolledCount} / {off.maxQuota}
                           </span>
-                          <span>{pct}%</span>
+                          <span className="text-slate-500">{pct}%</span>
                         </div>
                         <Progress
                           value={pct}
+                          className="h-1.5"
                           indicatorClassName={
-                            isFull ? 'bg-red-600' : 'bg-[#E05A1B]'
+                            isFull ? 'bg-red-600' : 'bg-[#002B49]'
                           }
                         />
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right tabular-nums">
                       <Badge variant={isFull ? 'danger' : 'success'}>
                         {isFull
                           ? 'CUPO AGOTADO'
-                          : `${off.availableQuota} DISPONIBLES`}
+                          : `${off.availableQuota} PLAZAS LIBRES`}
                       </Badge>
                     </TableCell>
                   </TableRow>
@@ -436,6 +381,107 @@ export const EnterpriseDashboardView: React.FC<EnterpriseDashboardViewProps> = (
           </Table>
         </CardContent>
       </Card>
+
+      {/* Sección Inferior: Programas de Licenciatura y Sedes Nacionales */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <Card className="lg:col-span-7">
+          <CardHeader>
+            <CardTitle>
+              Distribución de Oferta por Carrera de Licenciatura (
+              {currentPeriod?.code})
+            </CardTitle>
+            <CardDescription>
+              Programas oficiales del catálogo curricular UNICEN y su ocupación
+              de matrícula vigente.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Código</TableHead>
+                  <TableHead>Programa de Licenciatura</TableHead>
+                  <TableHead className="text-right">Paralelos</TableHead>
+                  <TableHead className="text-right">Matrícula</TableHead>
+                  <TableHead className="text-right">Ocupación</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {careerStats.map((car) => (
+                  <TableRow key={car.id}>
+                    <TableCell>
+                      <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded">
+                        {car.code}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-semibold text-xs text-slate-900">
+                        {car.name}
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        {car.area}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-semibold tabular-nums">
+                      {car.coursesCount}
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-mono tabular-nums">
+                      {car.quota > 0 ? `${car.enrolled} / ${car.quota}` : '—'}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {car.quota > 0 ? (
+                        <Badge
+                          variant={car.pct >= 90 ? 'danger' : 'navy'}
+                          className="tabular-nums"
+                        >
+                          {car.pct}% ocupado
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-slate-400">
+                          Sin apertura en {currentPeriod?.code}
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-5">
+          <CardHeader>
+            <CardTitle>Sedes Nacionales UNICEN</CardTitle>
+            <CardDescription>
+              Infraestructura académica conectada al sistema SIIA 2026.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="divide-y divide-border p-0">
+            {campuses.map((camp) => (
+              <div
+                key={camp.id}
+                className="px-5 py-3.5 flex items-start justify-between gap-3"
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-3.5 h-3.5 text-[#002B49]" />
+                    <span className="font-semibold text-xs text-[#002B49]">
+                      {camp.name}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 pl-5">{camp.address}</p>
+                  <p className="text-[11px] font-mono text-slate-400 pl-5">
+                    Código SIIA: {camp.code}
+                  </p>
+                </div>
+                <Badge variant="neutral" className="shrink-0">
+                  {camp.city}
+                </Badge>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

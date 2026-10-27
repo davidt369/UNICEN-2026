@@ -403,13 +403,11 @@ export const AdminPortalView: React.FC = () => {
         {/* TAB 2: CATÁLOGO DE MATERIAS */}
         <TabsContent value="subjects">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <Card className="lg:col-span-4 h-fit border-t-4 border-t-accent">
+            <Card className="lg:col-span-4 h-fit">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Registrar Nueva Materia
-                </CardTitle>
+                <CardTitle>Registrar Nueva Asignatura</CardTitle>
                 <CardDescription>
-                  Añadir asignatura al plan curricular oficial de UNICEN
+                  Añadir materia al plan curricular oficial de UNICEN
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -476,7 +474,7 @@ export const AdminPortalView: React.FC = () => {
                   </div>
                   <Button type="submit" variant="orange" className="w-full">
                     <Plus className="w-4 h-4" />
-                    Crear Materia
+                    Crear Asignatura
                   </Button>
                 </form>
               </CardContent>
@@ -484,11 +482,11 @@ export const AdminPortalView: React.FC = () => {
 
             <Card className="lg:col-span-8">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Materias Activas en el Catálogo (Soft Delete Habilitado)
+                <CardTitle>
+                  Asignaturas Activas en el Catálogo (Baja Lógica Habilitada)
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -537,11 +535,9 @@ export const AdminPortalView: React.FC = () => {
         {/* TAB 3: OFERTA DE CURSOS */}
         <TabsContent value="courses">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <Card className="lg:col-span-5 h-fit border-t-4 border-t-accent">
+            <Card className="lg:col-span-5 h-fit">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Aperturar Curso en Gestión
-                </CardTitle>
+                <CardTitle>Aperturar Paralelo en Gestión</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateOffering} className="space-y-3">
@@ -707,11 +703,9 @@ export const AdminPortalView: React.FC = () => {
 
             <Card className="lg:col-span-7">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Cursos Ofertados Activos
-                </CardTitle>
+                <CardTitle>Paralelos Ofertados Activos</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -763,11 +757,9 @@ export const AdminPortalView: React.FC = () => {
         {/* TAB 4: REGISTRO DE ESTUDIANTES Y PERSONAL */}
         <TabsContent value="users">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <Card className="lg:col-span-4 h-fit border-t-4 border-t-accent">
+            <Card className="lg:col-span-4 h-fit">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Registrar Estudiante o Docente
-                </CardTitle>
+                <CardTitle>Registrar Estudiante o Docente</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateUser} className="space-y-3">
@@ -858,11 +850,11 @@ export const AdminPortalView: React.FC = () => {
 
             <Card className="lg:col-span-8">
               <CardHeader>
-                <CardTitle className="text-sm uppercase">
-                  Padrón Institucional Activo (Soft Delete)
+                <CardTitle>
+                  Padrón Institucional Activo (Baja Lógica Habilitada)
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>

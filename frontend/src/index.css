@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 33% 98%;        /* #F8FAFC Superficie neutra institucional */
+    --foreground: 222.2 47.4% 11.2%;  /* #0F172A Texto principal de alto contraste */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 47.4% 11.2%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222.2 47.4% 11.2%;
     --primary: 205 100% 14%;          /* #002B49 Azul Marino Institucional UNICEN */
     --primary-foreground: 210 40% 98%;
-    --secondary: 207 100% 20%;        /* #003865 Azul Secundario UNICEN */
+    --secondary: 207 100% 20%;        /* #003865 Azul Secundario Institucional UNICEN */
     --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 19 79% 49%;             /* #E05A1B Naranja Vibrante Institucional UNICEN */
+    --muted-foreground: 215 20.2% 38%;
+    --accent: 19 79% 49%;             /* #E05A1B Naranja Institucional UNICEN */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72.2% 50.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 89%;
+    --input: 214.3 31.8% 86%;
     --ring: 205 100% 14%;
-    --radius: 0.75rem;
+    --radius: 0.5rem;
   }
 
   * {
@@ -35,5 +35,14 @@
     color: hsl(var(--foreground));
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
       Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

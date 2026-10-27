@@ -6,11 +6,12 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Building2,
+  AlertCircle,
 } from 'lucide-react';
 import unicenLogo from '@/logo.png';
 import { apiRequest, AuthUser, setStoredSession } from '@/lib/api';
-import { Badge, Button, Card, Input } from '@/components/ui/primitives';
+import { Badge, Button, Input, Label } from '@/components/ui/primitives';
+import { Input as ShadcnInput } from '@/components/ui/input';
 
 interface LoginViewProps {
   onLoginSuccess: (user: AuthUser, token: string) => void;
@@ -19,27 +20,27 @@ interface LoginViewProps {
 const DEMO_ACCOUNTS = [
   {
     role: 'ESTUDIANTE',
-    title: 'Alejandro Morales (Estudiante IA)',
-    subtitle: 'R.U. RU-2026-482910 • Lic. Innovación Digital e IA',
+    title: 'Alejandro Morales',
+    code: 'RU-2026-482910',
+    scope: 'Lic. Innovación Digital e IA • Sede Cochabamba',
     email: 'estudiante1@unicen.edu.bo',
     icon: GraduationCap,
-    color: 'border-l-4 border-l-accent',
   },
   {
     role: 'DOCENTE',
-    title: 'Ph.D. Ing. Roberto Méndez (Docente)',
-    subtitle: 'DOC-IIA-104 • Titular de IA y Arquitectura Limpia',
+    title: 'Ph.D. Ing. Roberto Méndez',
+    code: 'DOC-IIA-104',
+    scope: 'Cátedra de IA y Arquitectura Limpia • Sede Cochabamba',
     email: 'docente.ia@unicen.edu.bo',
     icon: BookOpen,
-    color: 'border-l-4 border-l-primary',
   },
   {
     role: 'ADMINISTRADOR',
-    title: 'M.Sc. Ricardo Quiroga (Dirección SIIA)',
-    subtitle: 'ADM-UNICEN-001 • Administración Nacional',
+    title: 'M.Sc. Ricardo Quiroga',
+    code: 'ADM-UNICEN-001',
+    scope: 'Dirección Nacional de Registros e Inscripciones SIIA',
     email: 'admin@unicen.edu.bo',
     icon: ShieldCheck,
-    color: 'border-l-4 border-l-emerald-600',
   },
 ];
 
@@ -65,7 +66,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       setStoredSession(res.accessToken, res.user);
       onLoginSuccess(res.user, res.accessToken);
     } catch (err: any) {
-      setError(err.message || 'No se pudo iniciar sesión en SIIA UNICEN.');
+      setError(
+        err.message ||
+          'Credenciales inválidas. Verifique su correo @unicen.edu.bo o utilice una cuenta del directorio.',
+      );
     } finally {
       setLoading(false);
     }
@@ -77,192 +81,224 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Barra Superior Institucional UNICEN */}
-      <div className="bg-primary text-primary-foreground text-xs py-2.5 px-6 flex flex-wrap items-center justify-between border-b-2 border-b-accent">
-        <div className="flex items-center gap-4">
-          <span className="font-bold tracking-wide">
-            UNIVERSIDAD CENTRAL (UNICEN) • BOLIVIA
-          </span>
-          <span className="hidden sm:inline text-white/75">
-            Sedes: Cochabamba • La Paz • Santa Cruz
-          </span>
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-white">
+      {/* Panel Institucional Izquierdo — Identidad y Directorio SIIA UNICEN */}
+      <div className="lg:col-span-7 bg-[#002B49] text-white flex flex-col justify-between p-8 lg:p-12 xl:p-16 border-b lg:border-b-0 lg:border-r border-slate-800">
+        {/* Cabecera Institucional */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-white/10">
+          <div className="bg-white rounded-md px-4 py-2.5 shadow-sm inline-flex items-center">
+            <img
+              src={unicenLogo}
+              alt="Universidad Central UNICEN"
+              className="h-10 w-auto object-contain"
+            />
+          </div>
+          <div className="text-right">
+            <p className="text-xs font-semibold text-white tracking-wide">
+              UNIVERSIDAD CENTRAL • BOLIVIA
+            </p>
+            <p className="text-[11px] text-sky-200/80 mt-0.5">
+              Cochabamba • La Paz • Santa Cruz
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-0.5 rounded bg-accent text-accent-foreground font-extrabold">
-            PORTAL SIIA 2026
-          </span>
-          <span className="text-white/80 font-mono hidden md:inline">
-            PASETO v4.public (Ed25519)
-          </span>
-        </div>
-      </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-6xl w-full mx-auto my-6 lg:my-10 px-4 gap-8 items-center">
-        {/* Columna Izquierda: Identidad UNICEN con Logo Oficial */}
-        <div className="lg:col-span-7 bg-primary text-primary-foreground rounded-2xl p-8 lg:p-10 shadow-xl relative overflow-hidden border border-white/10">
-          <div className="relative z-10 space-y-6">
-            {/* Contenedor Blanco de Alto Contraste para el Logo Oficial UNICEN */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="bg-white rounded-xl px-5 py-3 shadow-md inline-flex items-center">
-                <img
-                  src={unicenLogo}
-                  alt="Logo Oficial UNICEN - Comprometida con tu Futuro Laboral"
-                  className="h-12 w-auto object-contain"
-                />
-              </div>
+        {/* Cuerpo Principal e Identidad del Sistema */}
+        <div className="my-8 space-y-8 max-w-2xl">
+          <div className="space-y-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white leading-tight">
+              Sistema Integrado de Información Académica (SIIA 2026)
+            </h1>
+            <p className="text-sm sm:text-base text-sky-100/85 leading-relaxed max-w-[65ch]">
+              Plataforma empresarial para la administración del catálogo
+              curricular, apertura de paralelos, inscripción transaccional con
+              control de cupos y colisión horaria, planillas docentes con
+              ponderación dinámica y emisión de Kardex académico.
+            </p>
+          </div>
 
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold">
-                <Building2 className="w-3.5 h-3.5 text-accent" />
-                <span>Sistema Académico Oficial</span>
-              </div>
+          {/* Directorio Estructurado de Acceso para Evaluación Técnica */}
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-semibold text-sky-200">
+                Directorio de Perfiles Habilitados (Ingreso Directo Evaluador)
+              </h2>
+              <span className="text-[11px] font-mono text-sky-200/80 tabular-nums">
+                Clave: Unicen2026!
+              </span>
             </div>
 
-            <div>
-              <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                Portal Académico <span className="text-accent">SIIA 2026</span>
-              </h1>
-              <p className="mt-2 text-slate-200 text-sm lg:text-base leading-relaxed">
-                Sistema Integrado de Información Académica. Gestión de oferta de
-                cursos, inscripciones transaccionales con validación de cupo y
-                choque de horarios, evaluaciones dinámicas ponderadas y Kardex
-                estudiantil.
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                Acceso Rápido de Demostración (1 Clic para Evaluadores):
-              </p>
-              <div className="grid gap-2.5">
-                {DEMO_ACCOUNTS.map((acc) => {
-                  const Icon = acc.icon;
-                  return (
-                    <button
-                      key={acc.email}
-                      type="button"
-                      disabled={loading}
-                      onClick={() => {
-                        setEmail(acc.email);
-                        setPassword('Unicen2026!');
-                        performLogin(acc.email, 'Unicen2026!');
-                      }}
-                      className={`w-full text-left bg-white/95 hover:bg-white text-slate-900 rounded-xl p-3.5 transition-all flex items-center justify-between shadow-sm group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${acc.color}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-slate-100 text-primary">
-                          <Icon className="w-5 h-5" aria-hidden="true" />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-primary flex items-center gap-2">
-                            {acc.title}
-                            <Badge
-                              variant={
-                                acc.role === 'ESTUDIANTE'
-                                  ? 'orange'
-                                  : acc.role === 'DOCENTE'
-                                    ? 'navy'
-                                    : 'success'
-                              }
-                            >
-                              {acc.role}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {acc.subtitle}
-                          </p>
-                        </div>
+            <div className="rounded-lg border border-white/15 bg-[#003865]/60 divide-y divide-white/10 overflow-hidden">
+              {DEMO_ACCOUNTS.map((acc) => {
+                const Icon = acc.icon;
+                const isSelected = email === acc.email;
+                return (
+                  <button
+                    key={acc.email}
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      setEmail(acc.email);
+                      setPassword('Unicen2026!');
+                      performLogin(acc.email, 'Unicen2026!');
+                    }}
+                    className={`w-full text-left px-4 py-3.5 transition-colors flex items-center justify-between gap-4 hover:bg-white/10 focus-visible:outline-none focus-visible:bg-white/15 ${
+                      isSelected ? 'bg-white/10' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="h-9 w-9 rounded-md bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-white">
+                        <Icon className="w-4 h-4" aria-hidden="true" />
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-accent group-hover:translate-x-1 transition-all" />
-                    </button>
-                  );
-                })}
-              </div>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-semibold text-white truncate">
+                            {acc.title}
+                          </span>
+                          <span className="text-[11px] font-mono text-sky-200 bg-white/10 px-1.5 py-0.5 rounded tabular-nums">
+                            {acc.code}
+                          </span>
+                        </div>
+                        <p className="text-xs text-sky-100/75 truncate mt-0.5">
+                          {acc.scope}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded border border-white/20 text-white bg-white/5">
+                        {acc.role}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#E05A1B] bg-white px-2.5 py-1 rounded">
+                        Acceder
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Columna Derecha: Formulario de Autenticación */}
-        <Card className="lg:col-span-5 p-8 shadow-lg border-t-4 border-t-accent">
-          <div className="mb-6 flex flex-col items-start gap-3">
-            <img
-              src={unicenLogo}
-              alt="UNICEN"
-              className="h-10 w-auto object-contain"
-            />
-            <div>
-              <h2 className="text-xl font-bold text-primary">
-                Ingreso Institucional SIIA
-              </h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                Autenticación criptográfica mediante tokens PASETO v4.public
-              </p>
-            </div>
+        {/* Pie Institucional Técnico */}
+        <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-sky-200/80">
+          <div className="flex items-center gap-2 font-mono">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>Autenticación PASETO v4.public (Ed25519)</span>
+          </div>
+          <span>
+            Arquitectura Limpia • Control ACID • Auditoría y Baja Lógica
+          </span>
+        </div>
+      </div>
+
+      {/* Panel Derecho — Espacio de Autenticación */}
+      <div className="lg:col-span-5 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-14 xl:px-16 bg-white">
+        <div className="w-full max-w-md mx-auto space-y-6">
+          <div className="space-y-2 border-b border-slate-200 pb-5">
+            <h2 className="text-xl font-bold text-[#002B49] tracking-tight">
+              Iniciar Sesión Institucional
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Ingrese sus credenciales institucionales de la Universidad Central
+              para acceder a los módulos habilitados según su rol académico.
+            </p>
           </div>
 
           {error && (
             <div
               role="alert"
-              className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium"
+              className="p-3.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-2.5"
             >
-              {error}
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="font-semibold">Error de autenticación</p>
+                <p>{error}</p>
+              </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <Input
-                label="Correo Institucional (@unicen.edu.bo)"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="usuario@unicen.edu.bo"
-              />
-              <Mail
-                className="w-4 h-4 text-slate-400 absolute right-3 top-8 pointer-events-none"
-                aria-hidden="true"
-              />
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="login-email"
+                className="text-xs font-semibold text-slate-700"
+              >
+                Correo Institucional (@unicen.edu.bo)
+              </Label>
+              <div className="relative">
+                <ShadcnInput
+                  id="login-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="usuario@unicen.edu.bo"
+                  className="pr-9 h-10"
+                />
+                <Mail
+                  className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
-            <div className="relative">
-              <Input
-                label="Contraseña SIIA"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-              <Lock
-                className="w-4 h-4 text-slate-400 absolute right-3 top-8 pointer-events-none"
-                aria-hidden="true"
-              />
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="login-password"
+                className="text-xs font-semibold text-slate-700"
+              >
+                Contraseña SIIA
+              </Label>
+              <div className="relative">
+                <ShadcnInput
+                  id="login-password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="pr-9 h-10"
+                />
+                <Lock
+                  className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
-            <Button
-              type="submit"
-              variant="orange"
-              size="lg"
-              className="w-full mt-2"
-              disabled={loading}
-            >
-              {loading ? 'Verificando firma PASETO...' : 'Ingresar al Portal SIIA'}
-            </Button>
+            <div className="pt-2">
+              <Button
+                type="submit"
+                variant="orange"
+                size="lg"
+                className="w-full h-10 font-semibold"
+                disabled={loading}
+              >
+                {loading
+                  ? 'Verificando firma criptográfica PASETO...'
+                  : 'Ingresar al Sistema SIIA'}
+              </Button>
+            </div>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-border text-xs text-muted-foreground space-y-1">
-            <p className="font-semibold text-foreground">
-              Credenciales por defecto del Seeder:
-            </p>
-            <p>
-              • Contraseña universal demo:{' '}
-              <code className="font-mono bg-muted px-1.5 py-0.5 rounded text-primary font-bold">
-                Unicen2026!
+          <div className="pt-5 border-t border-slate-200 text-xs text-slate-600 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-slate-700">
+                Credencial activa en formulario:
+              </span>
+              <code className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded text-[#002B49] font-semibold">
+                {email}
               </code>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Puede seleccionar cualquiera de los 3 perfiles del panel izquierdo
+              para alternar inmediatamente entre la vista de Estudiante, Docente
+              y Dirección Académica.
             </p>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

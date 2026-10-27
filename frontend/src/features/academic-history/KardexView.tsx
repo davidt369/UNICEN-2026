@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Award,
-  BookCheck,
-  TrendingUp,
-  Clock,
-  FileSpreadsheet,
-} from 'lucide-react';
 import { apiRequest } from '../../lib/api';
-import { Badge, Card } from '../../components/ui/primitives';
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/primitives';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../components/ui/table';
 
 export const KardexView: React.FC = () => {
   const [kardex, setKardex] = useState<any | null>(null);
@@ -24,15 +32,15 @@ export const KardexView: React.FC = () => {
   if (loading) {
     return (
       <Card className="p-8 text-center text-sm text-slate-500">
-        Consultando Kardex Académico SIIA UNICEN...
+        Consultando Kardex Académico Oficial en SIIA UNICEN...
       </Card>
     );
   }
 
   if (error || !kardex) {
     return (
-      <Card className="p-6 text-red-600 text-sm">
-        Error al cargar el historial académico: {error}
+      <Card className="p-6 text-red-700 text-xs font-medium">
+        No se pudo recuperar el historial académico: {error}
       </Card>
     );
   }
@@ -41,115 +49,112 @@ export const KardexView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Encabezado de Kardex */}
-      <div className="bg-[#002B49] text-white p-6 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#E05A1B] uppercase tracking-wider">
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>Historial Académico Oficial (Kardex Estudiantil)</span>
+      {/* Ficha Institucional de Kardex Estudiantil */}
+      <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-[#002B49] text-white px-6 py-5 flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold tracking-tight">
+              Kardex Académico Oficial — {kardex.studentName}
+            </h2>
+            <p className="text-xs text-sky-100/85 tabular-nums">
+              Registro Universitario:{' '}
+              <strong className="font-mono text-white">
+                {kardex.registrationNumber}
+              </strong>{' '}
+              • Programa:{' '}
+              <strong className="text-white">
+                {kardex.careerName || 'Tronco Común UNICEN'}
+              </strong>{' '}
+              • {kardex.campusName}
+            </p>
           </div>
-          <h2 className="text-2xl font-extrabold mt-1">{kardex.studentName}</h2>
-          <p className="text-xs text-slate-300 mt-1">
-            Código R.U.: <strong>{kardex.registrationNumber}</strong> • Carrera:{' '}
-            <strong>{kardex.careerName || 'Tronco Común UNICEN'}</strong> •{' '}
-            {kardex.campusName}
-          </p>
-        </div>
-        <div className="bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-center">
-          <p className="text-[11px] uppercase tracking-wider text-slate-300">
-            Promedio General Ponderado
-          </p>
-          <p className="text-3xl font-black text-[#E05A1B]">
-            {summary.generalAverage}{' '}
-            <span className="text-sm font-normal text-white">/ 100</span>
-          </p>
-        </div>
-      </div>
 
-      {/* Indicadores Resumen */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 flex items-center gap-3 border-l-4 border-l-[#002B49]">
-          <div className="p-2.5 rounded-lg bg-[#002B49]/10 text-[#002B49]">
-            <BookCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              Materias Aprobadas
+          <div className="bg-[#003865] border border-white/15 rounded-md px-4 py-2.5 text-right tabular-nums">
+            <p className="text-[11px] font-medium text-sky-200">
+              Promedio General Ponderado
             </p>
-            <p className="text-xl font-extrabold text-[#002B49]">
-              {summary.approvedCourses} / {summary.totalEnrolledCourses}
+            <p className="text-2xl font-bold text-white">
+              {summary.generalAverage}{' '}
+              <span className="text-xs font-normal text-sky-200">/ 100 pts</span>
             </p>
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-4 flex items-center gap-3 border-l-4 border-l-emerald-600">
-          <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-700">
-            <Award className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              Créditos Aprobados
+        {/* Cinta de Resumen Curricular */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border bg-white">
+          <div className="p-4">
+            <p className="text-xs font-medium text-slate-500">
+              Asignaturas Aprobadas
             </p>
-            <p className="text-xl font-extrabold text-emerald-700">
+            <p className="text-xl font-bold text-[#002B49] mt-1 tabular-nums">
+              {summary.approvedCourses}{' '}
+              <span className="text-xs font-normal text-slate-500">
+                de {summary.totalEnrolledCourses} cursadas
+              </span>
+            </p>
+          </div>
+
+          <div className="p-4">
+            <p className="text-xs font-medium text-slate-500">
+              Créditos Académicos Vencidos
+            </p>
+            <p className="text-xl font-bold text-emerald-700 mt-1 tabular-nums">
               {summary.approvedCredits} Cr.
             </p>
           </div>
-        </Card>
 
-        <Card className="p-4 flex items-center gap-3 border-l-4 border-l-[#E05A1B]">
-          <div className="p-2.5 rounded-lg bg-[#E05A1B]/10 text-[#E05A1B]">
-            <Clock className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              Materias en Curso
+          <div className="p-4">
+            <p className="text-xs font-medium text-slate-500">
+              Asignaturas en Curso
             </p>
-            <p className="text-xl font-extrabold text-[#E05A1B]">
+            <p className="text-xl font-bold text-[#002B49] mt-1 tabular-nums">
               {summary.inProgressCourses}
             </p>
           </div>
-        </Card>
 
-        <Card className="p-4 flex items-center gap-3 border-l-4 border-l-slate-600">
-          <div className="p-2.5 rounded-lg bg-slate-100 text-slate-700">
-            <TrendingUp className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              Nota Mínima Aprobación
+          <div className="p-4">
+            <p className="text-xs font-medium text-slate-500">
+              Escala Reglamentaria UNICEN
             </p>
-            <p className="text-xl font-extrabold text-slate-800">51.0 pts</p>
+            <p className="text-xl font-bold text-slate-800 mt-1 tabular-nums">
+              ≥ 51.0 pts{' '}
+              <span className="text-xs font-normal text-slate-500">
+                (Aprobación)
+              </span>
+            </p>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Detalle de Materias y Desglose de Evaluaciones Dinámicas */}
       <div className="space-y-4">
         {records.map((rec: any) => (
-          <Card key={rec.enrollmentId} className="p-5 space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="navy">{rec.periodCode}</Badge>
-                  <Badge variant="neutral">{rec.subjectCode}</Badge>
-                  <span className="text-xs text-slate-500 font-semibold">
-                    Semestre {rec.semesterLevel} • {rec.credits} Créditos
+          <Card key={rec.enrollmentId}>
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="navy" className="tabular-nums">
+                    {rec.periodCode}
+                  </Badge>
+                  <span className="font-mono text-xs font-bold text-[#002B49] bg-slate-100 px-1.5 py-0.5 rounded tabular-nums">
+                    {rec.subjectCode}
                   </span>
+                  <CardTitle className="text-sm font-bold text-[#002B49]">
+                    {rec.subjectName}
+                  </CardTitle>
                 </div>
-                <h3 className="text-base font-bold text-[#002B49] mt-1">
-                  {rec.subjectName}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {rec.groupCode} • Docente: {rec.teacherName}
-                </p>
+                <CardDescription className="tabular-nums">
+                  {rec.groupCode} • Docente: {rec.teacherName} • Semestre{' '}
+                  {rec.semesterLevel} ({rec.credits} Créditos)
+                </CardDescription>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 tabular-nums">
                 <div className="text-right">
-                  <p className="text-[11px] uppercase font-bold text-slate-400">
-                    Nota Acumulada ({rec.evaluatedWeightPercentage}% eval.)
+                  <p className="text-[11px] font-medium text-slate-500">
+                    Nota Ponderada ({rec.evaluatedWeightPercentage}% evaluado)
                   </p>
-                  <p className="text-xl font-extrabold text-[#002B49]">
+                  <p className="text-lg font-bold text-[#002B49]">
                     {rec.finalScore} / 100
                   </p>
                 </div>
@@ -159,39 +164,42 @@ export const KardexView: React.FC = () => {
                       ? 'success'
                       : rec.status === 'REPROBADA'
                         ? 'danger'
-                        : 'orange'
+                        : 'navy'
                   }
                 >
                   {rec.status}
                 </Badge>
               </div>
-            </div>
+            </CardHeader>
 
-            {/* Tabla de Evaluaciones Dinámicas Ponderadas */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-500 uppercase">
-                    <th className="py-2 pr-3">Evaluación del Curso</th>
-                    <th className="py-2 px-3">Ponderación (%)</th>
-                    <th className="py-2 px-3">Nota Obtenida (/100)</th>
-                    <th className="py-2 px-3">Puntos Ponderados</th>
-                    <th className="py-2 pl-3">Observación Docente</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Evaluación Parcial / Final</TableHead>
+                    <TableHead className="text-right">Ponderación</TableHead>
+                    <TableHead className="text-right">
+                      Calificación (/100)
+                    </TableHead>
+                    <TableHead className="text-right">
+                      Aporte Ponderado
+                    </TableHead>
+                    <TableHead>Observación Docente</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {rec.evaluationsBreakdown.map((ev: any) => (
-                    <tr key={ev.evaluationId}>
-                      <td className="py-2.5 pr-3 font-semibold text-slate-800">
+                    <TableRow key={ev.evaluationId}>
+                      <TableCell className="font-semibold text-xs text-slate-800">
                         {ev.evaluationName}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-slate-600">
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs text-slate-600 tabular-nums">
                         {ev.weightPercentage}%
-                      </td>
-                      <td className="py-2.5 px-3">
+                      </TableCell>
+                      <TableCell className="text-right text-xs tabular-nums">
                         {ev.score !== null ? (
                           <span
-                            className={`font-bold ${
+                            className={`font-semibold ${
                               ev.score >= 51
                                 ? 'text-emerald-700'
                                 : 'text-red-600'
@@ -200,22 +208,20 @@ export const KardexView: React.FC = () => {
                             {ev.score} pts
                           </span>
                         ) : (
-                          <span className="text-slate-400 italic">
-                            Pendiente
-                          </span>
+                          <span className="text-slate-400">Pendiente</span>
                         )}
-                      </td>
-                      <td className="py-2.5 px-3 font-bold text-[#002B49]">
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs font-bold text-[#002B49] tabular-nums">
                         {ev.score !== null ? `+${ev.weightedPoints} pts` : '—'}
-                      </td>
-                      <td className="py-2.5 pl-3 text-slate-500">
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
                         {ev.feedback || '—'}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </CardContent>
           </Card>
         ))}
       </div>

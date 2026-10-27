@@ -24,7 +24,6 @@ import { AdminPortalView } from '@/features/admin/AdminPortalView';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
@@ -54,31 +53,31 @@ export const App: React.FC = () => {
   const navItems = [
     {
       id: 'dashboard',
-      label: 'Dashboard Ejecutivo SIIA',
+      label: 'Resumen Operativo SIIA',
       icon: LayoutDashboard,
       roles: ['ESTUDIANTE', 'DOCENTE', 'ADMINISTRADOR'],
     },
     {
       id: 'enrollments',
-      label: 'Oferta e Inscripción de Cursos',
+      label: 'Inscripción y Oferta de Cursos',
       icon: GraduationCap,
       roles: ['ESTUDIANTE'],
     },
     {
       id: 'kardex',
-      label: 'Mi Kardex e Historial Académico',
+      label: 'Kardex e Historial Académico',
       icon: FileSpreadsheet,
       roles: ['ESTUDIANTE'],
     },
     {
       id: 'grading',
-      label: 'Planilla de Notas y Evaluaciones',
+      label: 'Planilla Docente y Evaluaciones',
       icon: BookOpen,
       roles: ['DOCENTE', 'ADMINISTRADOR'],
     },
     {
       id: 'admin',
-      label: 'Administración Académica y Catálogo',
+      label: 'Dirección Académica y Catálogo',
       icon: Settings,
       roles: ['ADMINISTRADOR'],
     },
@@ -86,60 +85,50 @@ export const App: React.FC = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col lg:flex-row bg-background">
-      {/* Sidebar Empresarial Fijo Institucional UNICEN (bg-primary = #002B49) */}
-      <aside className="w-full lg:w-72 lg:h-full bg-primary text-primary-foreground flex flex-col justify-between shrink-0 border-r border-white/10 shadow-xl z-40">
-        {/* Cabecera Oficial con Logo UNICEN y Navegación */}
+      {/* Sidebar Institucional Fijo UNICEN (#002B49) */}
+      <aside className="w-full lg:w-64 xl:w-72 lg:h-full bg-[#002B49] text-white flex flex-col justify-between shrink-0 border-r border-slate-800 z-40">
         <div className="flex flex-col min-h-0 flex-1 overflow-y-auto">
-          <div className="p-4 shrink-0">
-            <div className="bg-white rounded-xl px-3.5 py-2.5 shadow-md flex items-center justify-between gap-2">
+          {/* Identidad Institucional con Logo Oficial UNICEN */}
+          <div className="p-4 border-b border-white/10 shrink-0">
+            <div className="bg-white rounded-md px-3 py-2 flex items-center justify-between gap-2">
               <img
                 src={unicenLogo}
-                alt="UNICEN - Comprometida con tu Futuro Laboral"
-                className="h-9 w-auto object-contain"
+                alt="Universidad Central UNICEN"
+                className="h-8 w-auto object-contain"
               />
-              <span className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-[10px] font-extrabold tracking-wider uppercase shrink-0">
+              <span className="px-2 py-0.5 rounded bg-[#002B49] text-white text-[10px] font-bold tracking-wider uppercase shrink-0">
                 SIIA 2026
               </span>
             </div>
           </div>
 
-          <Separator className="bg-white/10 shrink-0" />
-
-          {/* Tarjeta de Usuario con Avatar Oficial de shadcn/ui */}
-          <div className="p-3.5 mx-4 mt-4 rounded-xl bg-secondary border border-white/10 flex items-center gap-3 shrink-0">
-            <Avatar className="h-10 w-10 border border-accent/50 shrink-0">
-              <AvatarFallback className="bg-accent text-accent-foreground font-bold text-xs">
+          {/* Ficha Compacta de Operador Autenticado */}
+          <div className="p-3.5 mx-3.5 mt-3.5 rounded-md bg-[#003865] border border-white/10 flex items-center gap-3 shrink-0">
+            <Avatar className="h-9 w-9 border border-white/20 shrink-0">
+              <AvatarFallback className="bg-[#E05A1B] text-white font-bold text-xs">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-bold text-xs truncate">{user.fullName}</p>
-              <p className="text-[11px] text-slate-300 font-mono truncate">
-                {user.registrationNumber}
+              <p className="font-semibold text-xs text-white truncate">
+                {user.fullName}
               </p>
-              <Badge
-                variant={
-                  user.role === 'ESTUDIANTE'
-                    ? 'orange'
-                    : user.role === 'DOCENTE'
-                      ? 'navy'
-                      : 'success'
-                }
-                className="mt-1 bg-white text-[10px] py-0 px-1.5"
-              >
-                {user.role}
-              </Badge>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-[11px] text-sky-200 font-mono truncate tabular-nums">
+                  {user.registrationNumber}
+                </span>
+                <span className="text-[10px] font-semibold px-1.5 py-0 rounded bg-white/15 text-white">
+                  {user.role}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Navegación de Módulos */}
+          {/* Menú Principal de Navegación */}
           <nav
             aria-label="Navegación principal SIIA UNICEN"
-            className="p-4 space-y-1.5 flex-1"
+            className="p-3.5 space-y-1 flex-1"
           >
-            <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Módulos SIIA 2026
-            </p>
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -147,10 +136,10 @@ export const App: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E05A1B] ${
                     isActive
-                      ? 'bg-accent text-accent-foreground shadow-md'
-                      : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#E05A1B] text-white shadow-sm'
+                      : 'text-sky-100/85 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
@@ -161,46 +150,48 @@ export const App: React.FC = () => {
           </nav>
         </div>
 
-        {/* Pie Fijo del Sidebar (Siempre visible abajo) */}
-        <div className="p-4 border-t border-white/10 bg-primary space-y-2.5 shrink-0">
-          <div className="px-3 py-1.5 rounded-lg bg-white/5 text-[11px] text-emerald-300 flex items-center gap-2 font-mono">
-            <ShieldCheck className="w-4 h-4 shrink-0" aria-hidden="true" />
-            <span className="truncate">PASETO v4.public (Ed25519)</span>
+        {/* Pie Fijo del Sidebar (Siempre visible) */}
+        <div className="p-3.5 border-t border-white/10 bg-[#00233B] space-y-2.5 shrink-0">
+          <div className="px-2.5 py-1.5 rounded bg-white/5 border border-white/10 text-[11px] text-sky-200 flex items-center gap-2 font-mono">
+            <ShieldCheck
+              className="w-3.5 h-3.5 text-emerald-400 shrink-0"
+              aria-hidden="true"
+            />
+            <span className="truncate">Sesión PASETO v4.public</span>
           </div>
           <Button
             variant="orange"
             size="sm"
-            className="w-full font-bold shadow-md"
+            className="w-full font-semibold"
             onClick={handleLogout}
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5" />
             Cerrar Sesión SIIA
           </Button>
         </div>
       </aside>
 
-      {/* Columna Derecha con Header Fijo y Área de Trabajo con Scroll Independiente */}
+      {/* Área Principal con Topbar Fija y Scroll Independiente */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-        {/* Topbar Ejecutiva Fija */}
-        <header className="shrink-0 bg-card border-b border-border px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-sm z-30">
-          <div className="flex items-center gap-3 text-xs font-semibold text-muted-foreground">
-            <img
-              src={unicenLogo}
-              alt="Logo UNICEN"
-              className="h-6 w-auto object-contain hidden sm:block"
-            />
-            <span className="hidden sm:inline text-border">|</span>
-            <span className="text-primary font-bold text-sm">
+        {/* Barra Superior de Contexto Operativo */}
+        <header className="shrink-0 h-14 bg-white border-b border-border px-6 flex items-center justify-between gap-4 z-30">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="text-sm font-bold text-[#002B49] truncate">
               {navItems.find((n) => n.id === activeTab)?.label}
-            </span>
+            </h1>
+            {user.campusName && (
+              <span className="hidden md:inline-block text-xs text-slate-500 border-l border-slate-200 pl-3 truncate">
+                {user.campusName}
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
-            <span className="hidden md:inline text-muted-foreground">
-              Correo: <strong className="text-foreground">{user.email}</strong>
+          <div className="flex items-center gap-3 text-xs shrink-0">
+            <span className="hidden sm:inline text-slate-600 font-mono">
+              {user.email}
             </span>
             {user.careerName && (
-              <Badge variant="navy" className="hidden sm:inline-flex">
+              <Badge variant="navy" className="hidden lg:inline-flex">
                 {user.careerName}
               </Badge>
             )}
@@ -208,7 +199,7 @@ export const App: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+              className="h-8 text-xs border-slate-300 text-slate-700 hover:bg-slate-100"
             >
               <LogOut className="w-3.5 h-3.5" />
               Salir
@@ -216,8 +207,8 @@ export const App: React.FC = () => {
           </div>
         </header>
 
-        {/* Único Contenedor con Scroll Vertical */}
-        <main className="flex-1 overflow-y-auto p-6">
+        {/* Contenedor de Trabajo con Scroll Independiente */}
+        <main className="flex-1 overflow-y-auto p-6 bg-background">
           <div className="max-w-7xl w-full mx-auto pb-10">
             {activeTab === 'dashboard' && (
               <EnterpriseDashboardView user={user} onNavigate={setActiveTab} />

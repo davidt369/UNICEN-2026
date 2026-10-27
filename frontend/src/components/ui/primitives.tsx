@@ -38,7 +38,7 @@ export const Input = React.forwardRef<
       {label && (
         <Label
           htmlFor={inputId}
-          className="text-xs font-semibold text-primary uppercase tracking-wider"
+          className="text-xs font-semibold text-slate-700"
         >
           {label}
         </Label>
@@ -60,7 +60,7 @@ export const Select = React.forwardRef<
       {label && (
         <Label
           htmlFor={selectId}
-          className="text-xs font-semibold text-primary uppercase tracking-wider"
+          className="text-xs font-semibold text-slate-700"
         >
           {label}
         </Label>
