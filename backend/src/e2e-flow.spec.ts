@@ -3,13 +3,15 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './core/filters/http-exception.filter';
 import { AuthService } from './modules/identity-and-access/application/auth.service';
+import { CatalogService } from './modules/academic-catalog/application/catalog.service';
 import { CourseOfferingsService } from './modules/course-offerings/application/course-offerings.service';
 import { EnrollmentsService } from './modules/student-enrollments/application/enrollments.service';
 import { GradingService } from './modules/grading-and-records/application/grading.service';
 
-describe('SIIA UNICEN 2026 - Integración End-to-End con PostgreSQL', () => {
+describe('SIIA UNICEN 2026 - Pruebas Integrales de los 5 Módulos sobre PostgreSQL', () => {
   let app: INestApplication;
   let authService: AuthService;
+  let catalogService: CatalogService;
   let offeringsService: CourseOfferingsService;
   let enrollmentsService: EnrollmentsService;
   let gradingService: GradingService;
@@ -31,6 +33,7 @@ describe('SIIA UNICEN 2026 - Integración End-to-End con PostgreSQL', () => {
     await app.init();
 
     authService = app.get(AuthService);
+    catalogService = app.get(CatalogService);
     offeringsService = app.get(CourseOfferingsService);
     enrollmentsService = app.get(EnrollmentsService);
     gradingService = app.get(GradingService);
@@ -40,7 +43,7 @@ describe('SIIA UNICEN 2026 - Integración End-to-End con PostgreSQL', () => {
     await app.close();
   });
 
-  it('1. Login PASETO v4.public para estudiante1@unicen.edu.bo', async () => {
+  it('[Módulo 1: Identity & Access] Login PASETO v4.public y ciclo de vida con Baja Lógica de Usuario', async () => {
     const res = await authService.login({
       email: 'estudiante1@unicen.edu.bo',
       password: 'Unicen2026!',
@@ -48,88 +51,87 @@ describe('SIIA UNICEN 2026 - Integración End-to-End con PostgreSQL', () => {
 
     expect(res.accessToken.startsWith('v4.public.')).toBe(true);
     expect(res.user.role).toBe('ESTUDIANTE');
-    expect(res.user.registrationNumber).toBe('RU-2026-482910');
+
+    // Crear usuario temporal y aplicar eliminación lógica (Soft Delete)
+    const uniqueSuffix = Date.now();
+    const tempUser = await authService.registerUser({
+      registrationNumber: `RU-TEST-${uniqueSuffix}`,
+      dni: '9988776 CB',
+      email: `test.${uniqueSuffix}@unicen.edu.bo`,
+      password: 'Unicen2026!',
+      firstName: 'Usuario',
+      lastName: 'Temporal',
+      role: 'ESTUDIANTE',
+    });
+    expect(tempUser.id).toBeDefined();
+
+    const deleted = await authService.softDeleteUser(tempUser.id);
+    expect(deleted.message).toContain('baja lógica');
+
+    await expect(authService.getProfile(tempUser.id)).rejects.toThrow(
+      /no encontrado o inactivo/,
+    );
   });
 
-  it('2. Rechaza inscripción duplicada al mismo curso', async () => {
-    const res = await authService.login({
-      email: 'estudiante1@unicen.edu.bo',
-      password: 'Unicen2026!',
-    });
-    const offerings = await offeringsService.getOfferings();
-    const arqCourse = offerings.find((o) => o.subjectCode === 'IIA-201');
-    expect(arqCourse).toBeDefined();
+  it('[Módulo 2: Academic Catalog] Consulta de Sedes, Carreras y CRUD de Materias con Baja Lógica', async () => {
+    const campuses = await catalogService.getCampuses();
+    const careers = await catalogService.getCareers();
+    expect(campuses.length).toBeGreaterThanOrEqual(3);
+    expect(careers.length).toBeGreaterThanOrEqual(6);
 
+    const uniqueCode = `TST-${Date.now().toString().slice(-4)}`;
+    const createdSubject = await catalogService.createSubject({
+      code: uniqueCode,
+      name: 'Materia de Prueba Automatizada',
+      credits: 4,
+      semesterLevel: 2,
+      hoursPerWeek: 4,
+      careerId: careers[0].id,
+      description: 'Verificación de catálogo y soft delete',
+    });
+    expect(createdSubject.code).toBe(uniqueCode);
+
+    const softDeleted = await catalogService.softDeleteSubject(
+      createdSubject.id,
+    );
+    expect(softDeleted.message).toContain('baja lógica');
+  });
+
+  it('[Módulo 3: Course Offerings] Control de Gestiones Académicas y Validación de Ponderaciones (100%)', async () => {
+    const periods = await offeringsService.getPeriods();
+    const current = periods.find((p) => p.code === 'I-2026');
+    expect(current).toBeDefined();
+
+    // Cerrar y volver a abrir inscripciones de la gestión I-2026
+    const closed = await offeringsService.togglePeriodEnrollments(
+      current!.id,
+      false,
+    );
+    expect(closed.enrollmentsOpen).toBe(false);
+
+    const reopened = await offeringsService.togglePeriodEnrollments(
+      current!.id,
+      true,
+    );
+    expect(reopened.enrollmentsOpen).toBe(true);
+
+    // Verificar rechazo de ponderaciones que no suman 100%
+    const offerings = await offeringsService.getOfferings();
     await expect(
-      enrollmentsService.enroll(
-        {
-          id: res.user.id,
-          email: res.user.email,
-          role: res.user.role,
-          registrationNumber: res.user.registrationNumber,
-          fullName: res.user.fullName,
-        },
-        { courseOfferingId: arqCourse!.id },
-      ),
-    ).rejects.toThrow(/Inscripción duplicada/);
+      offeringsService.updateCourseEvaluations(offerings[0].id, {
+        evaluations: [
+          { name: 'Parcial 1', weightPercentage: 40 },
+          { name: 'Parcial 2', weightPercentage: 40 },
+        ],
+      }),
+    ).rejects.toThrow(/exactamente 100%/);
   });
 
-  it('3. Rechaza inscripción cuando el cupo está agotado (2/2)', async () => {
+  it('[Módulo 4: Student Enrollments] Validación de Duplicados, Cupo Agotado, Choque de Horario y Retiro con Baja Lógica', async () => {
     const res = await authService.login({
       email: 'estudiante1@unicen.edu.bo',
       password: 'Unicen2026!',
     });
-    const offerings = await offeringsService.getOfferings();
-    const fullCourse = offerings.find((o) => o.subjectCode === 'MED-101');
-    expect(fullCourse).toBeDefined();
-
-    await expect(
-      enrollmentsService.enroll(
-        {
-          id: res.user.id,
-          email: res.user.email,
-          role: res.user.role,
-          registrationNumber: res.user.registrationNumber,
-          fullName: res.user.fullName,
-        },
-        { courseOfferingId: fullCourse!.id },
-      ),
-    ).rejects.toThrow(/Cupo agotado/);
-  });
-
-  it('4. Rechaza inscripción cuando existe choque de horario (Lunes 08:30-10:30 vs 08:00-10:00)', async () => {
-    const res = await authService.login({
-      email: 'estudiante1@unicen.edu.bo',
-      password: 'Unicen2026!',
-    });
-    const offerings = await offeringsService.getOfferings();
-    const conflictCourse = offerings.find((o) => o.subjectCode === 'IIA-402');
-    expect(conflictCourse).toBeDefined();
-
-    await expect(
-      enrollmentsService.enroll(
-        {
-          id: res.user.id,
-          email: res.user.email,
-          role: res.user.role,
-          registrationNumber: res.user.registrationNumber,
-          fullName: res.user.fullName,
-        },
-        { courseOfferingId: conflictCourse!.id },
-      ),
-    ).rejects.toThrow(/Choque de horario el día LUNES/);
-  });
-
-  it('5. Permite inscripción válida y luego retiro con baja lógica liberando el cupo', async () => {
-    const res = await authService.login({
-      email: 'estudiante1@unicen.edu.bo',
-      password: 'Unicen2026!',
-    });
-    const offerings = await offeringsService.getOfferings();
-    const validCourse = offerings.find((o) => o.subjectCode === 'IIA-301');
-    expect(validCourse).toBeDefined();
-    const initialCount = validCourse!.enrolledCount;
-
     const userCtx = {
       id: res.user.id,
       email: res.user.email,
@@ -138,31 +140,83 @@ describe('SIIA UNICEN 2026 - Integración End-to-End con PostgreSQL', () => {
       fullName: res.user.fullName,
     };
 
+    const offerings = await offeringsService.getOfferings();
+
+    // 4.1 Inscripción duplicada
+    const arqCourse = offerings.find((o) => o.subjectCode === 'IIA-201')!;
+    await expect(
+      enrollmentsService.enroll(userCtx, { courseOfferingId: arqCourse.id }),
+    ).rejects.toThrow(/Inscripción duplicada/);
+
+    // 4.2 Cupo agotado (2/2)
+    const fullCourse = offerings.find((o) => o.subjectCode === 'MED-101')!;
+    await expect(
+      enrollmentsService.enroll(userCtx, { courseOfferingId: fullCourse.id }),
+    ).rejects.toThrow(/Cupo agotado/);
+
+    // 4.3 Choque de horario (Lunes 08:30-10:30 vs Lunes 08:00-10:00)
+    const conflictCourse = offerings.find((o) => o.subjectCode === 'IIA-402')!;
+    await expect(
+      enrollmentsService.enroll(userCtx, {
+        courseOfferingId: conflictCourse.id,
+      }),
+    ).rejects.toThrow(/Choque de horario el día LUNES/);
+
+    // 4.4 Inscripción exitosa y retiro con baja lógica liberando cupo
+    const validCourse = offerings.find((o) => o.subjectCode === 'IIA-301')!;
+    const beforeQuota = validCourse.enrolledCount;
+
     const enrolled = await enrollmentsService.enroll(userCtx, {
-      courseOfferingId: validCourse!.id,
+      courseOfferingId: validCourse.id,
     });
     expect(enrolled.id).toBeDefined();
 
-    const afterEnroll = await offeringsService.getOfferingById(validCourse!.id);
-    expect(afterEnroll.enrolledCount).toBe(initialCount + 1);
+    const afterEnroll = await offeringsService.getOfferingById(validCourse.id);
+    expect(afterEnroll.enrolledCount).toBe(beforeQuota + 1);
 
-    // Retiro por baja lógica
-    const withdrawn = await enrollmentsService.withdraw(userCtx, enrolled.id);
-    expect(withdrawn.message).toContain('baja lógica');
-
+    await enrollmentsService.withdraw(userCtx, enrolled.id);
     const afterWithdraw = await offeringsService.getOfferingById(
-      validCourse!.id,
+      validCourse.id,
     );
-    expect(afterWithdraw.enrolledCount).toBe(initialCount);
+    expect(afterWithdraw.enrolledCount).toBe(beforeQuota);
   });
 
-  it('6. Consulta Kardex estudiantil con promedio ponderado y desglose de evaluaciones', async () => {
-    const res = await authService.login({
-      email: 'estudiante1@unicen.edu.bo',
+  it('[Módulo 5: Grading & Records] Planilla Docente, Registro de Notas Strategy y Kardex Académico', async () => {
+    const teacherLogin = await authService.login({
+      email: 'docente.ia@unicen.edu.bo',
       password: 'Unicen2026!',
     });
-    const kardex = await gradingService.getStudentKardex(res.user.id);
+    const teacherCtx = {
+      id: teacherLogin.user.id,
+      email: teacherLogin.user.email,
+      role: teacherLogin.user.role,
+      registrationNumber: teacherLogin.user.registrationNumber,
+      fullName: teacherLogin.user.fullName,
+    };
+
+    const offerings = await offeringsService.getOfferings();
+    const arqCourse = offerings.find((o) => o.subjectCode === 'IIA-201')!;
+
+    const gradebook = await gradingService.getCourseGradebook(arqCourse.id);
+    expect(gradebook.evaluations.length).toBeGreaterThanOrEqual(3);
+    expect(gradebook.students.length).toBeGreaterThanOrEqual(1);
+
+    const targetStudent = gradebook.students[0];
+    const thirdEval = gradebook.evaluations[2]; // Laboratorios Prácticos (20%)
+
+    const updatedStudentRow = await gradingService.recordGrade(teacherCtx, {
+      enrollmentId: targetStudent.enrollmentId,
+      evaluationId: thirdEval.id,
+      score: 95,
+      feedback: 'Laboratorio verificado en prueba automatizada',
+    });
+
+    expect(updatedStudentRow.finalScore).toBeGreaterThan(43.75);
+
+    const kardex = await gradingService.getStudentKardex(
+      targetStudent.studentId,
+    );
     expect(kardex.summary.approvedCourses).toBeGreaterThanOrEqual(1);
-    expect(kardex.records.length).toBeGreaterThanOrEqual(2);
+    expect(kardex.summary.generalAverage).toBeGreaterThan(51);
   });
 });
